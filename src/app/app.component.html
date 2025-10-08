@@ -16,14 +16,10 @@
 
   <div class="d-flex justify-content-center mb-4">
     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-      <input type="radio" class="btn-check" name="filtroTarefas" id="todas" autocomplete="off" checked (click)="filtro = FiltroTarefas.Todas">
-      <label class="btn btn-outline-primary" for="todas">Todas</label>
-
-      <input type="radio" class="btn-check" name="filtroTarefas" id="concluidas" autocomplete="off" (click)="filtro = FiltroTarefas.Concluidas">
-      <label class="btn btn-outline-primary" for="concluidas">Concluídas</label>
-
-      <input type="radio" class="btn-check" name="filtroTarefas" id="pendentes" autocomplete="off" (click)="filtro = FiltroTarefas.Pendentes">
-      <label class="btn btn-outline-primary" for="pendentes">Pendentes</label>
+      <ng-container *ngFor="let f of filtros">
+        <input type="radio" class="btn-check" name="filtroTarefas" [id]="f | slugify" autocomplete="off" [(ngModel)]="filtroAplicado" [value]="f">
+        <label class="btn btn-outline-primary" [for]="f | slugify">{{ f }}</label>
+      </ng-container>
     </div>
   </div>
 

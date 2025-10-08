@@ -1,18 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DiasDesdePipe } from './dias-desde.pipe';
+import { SlugifyPipe } from './slugify.pipe';
 
 
 
 @NgModule({
   declarations: [
-    DiasDesdePipe
+    DiasDesdePipe,
+    SlugifyPipe
   ],
   imports: [
     CommonModule
   ],
   exports: [
-    DiasDesdePipe
+    DiasDesdePipe,
+    SlugifyPipe
   ]
 })
 export class SharedModule { }

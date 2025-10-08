@@ -8,10 +8,10 @@ import { TarefaService } from './tarefa/tarefa.service';
 })
 export class AppComponent {
 
-  filtro: FiltroTarefas = FiltroTarefas.Todas;
-  FiltroTarefas = FiltroTarefas; // expõe o enum para o template
+  filtroAplicado: FiltroTarefas = FiltroTarefas.Todas; // "Todas" ou "Pendentes" ou "Concluídas"
   textoInputTarefa: string = '';
   @ViewChild('inputTarefa') inputTarefa!: ElementRef; // acessando a variável local do template diretamente
+  filtros = Object.values(FiltroTarefas); // [ "Todas", "Pendentes", "Concluídas" ]
 
   get totalTarefas(): number {
     return this.tarefas.length;
@@ -22,14 +22,15 @@ export class AppComponent {
   }
 
   get tarefas(): Tarefa[] {
-    return this._tarefasService.obterTarefas(this.filtro);
+    return this._tarefaService.obterTarefas(this.filtroAplicado);
   }
 
-  constructor(private _tarefasService: TarefaService) {}
+  constructor(private _tarefaService: TarefaService) {
+  }
 
   adicionarTarefa() {
     if (!this.textoInputTarefa.trim()) return; // evita tarefa vazia
-    this._tarefasService.adicionarTarefa({
+    this._tarefaService.adicionarTarefa({
       titulo: this.textoInputTarefa,
       isConcluida: false,
       dataCriacao: new Date()
@@ -39,7 +40,7 @@ export class AppComponent {
   }
 
   excluirTarefa(indiceTarefa: number) {
-    this._tarefasService.excluirTarefa(indiceTarefa);
+    this._tarefaService.excluirTarefa(indiceTarefa);
   }
 
 }
@@ -51,9 +52,9 @@ export interface Tarefa {
 }
 
 export enum FiltroTarefas {
-  Pendentes,
-  Concluidas,
-  Todas
+  Todas = 'Todas',
+  Pendentes = 'Pendentes',
+  Concluidas = 'Concluídas'
 }
 
 /* TODO: Ideias Marina

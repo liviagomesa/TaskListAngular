@@ -8,6 +8,7 @@ import { TarefaDeListaComponent } from './tarefa/tarefa-de-lista/tarefa-de-lista
 import '@angular/common/locales/global/pt';
 import { FormsModule } from '@angular/forms';
 import { TarefaModule } from './tarefa/tarefa.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { TarefaModule } from './tarefa/tarefa.module';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    TarefaModule
+    TarefaModule,
+    SharedModule
   ],
   providers: [
     {
