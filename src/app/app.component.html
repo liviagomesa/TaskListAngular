@@ -4,10 +4,10 @@
 
     <div class="d-flex justify-content-center gap-2">
       <div class="col-lg-5 col-9">
-        <input type="text" class="form-control" placeholder="Título da tarefa" #inputTarefa autofocus>
+        <input type="text" class="form-control" placeholder="Título da tarefa" [(ngModel)]="textoInputTarefa" autofocus #inputTarefa>
       </div>
       <div class="col-auto">
-        <button class="btn btn-primary mb-3" (click)="salvarTarefa(inputTarefa)">+</button>
+        <button class="btn btn-primary mb-3" (click)="adicionarTarefa()">+</button>
       </div>
     </div>
   </div>
@@ -28,7 +28,7 @@
   </div>
 
   <ul class="list-group col-lg-6 col-10 mx-auto">
-    <app-tarefa-de-lista *ngFor="let t of tarefas; index as i" [tarefa]="t" [indiceTarefa]="i" (emissorEventoExcluir)="excluirTarefa(i)" (emissorEventoCheckar)="checkarTarefa($event)" [filtroTarefas]="filtro"></app-tarefa-de-lista>
+    <app-tarefa-de-lista *ngFor="let t of tarefas; index as i" [tarefa]="t" [indiceTarefa]="i" (emissorEventoExcluir)="excluirTarefa(i)"></app-tarefa-de-lista>
   </ul>
 
   <div class="text-center mt-2" [class.text-success]="totalTarefas != 0 && quantConcluidas == totalTarefas">{{ quantConcluidas }}/{{ totalTarefas }} tarefa(s) concluída(s)</div>

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { TarefasService } from './tarefas.service';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { TarefaService } from './tarefa/tarefa.service';
 
 @Component({
   selector: 'app-root',
@@ -8,40 +8,46 @@ import { TarefasService } from './tarefas.service';
 })
 export class AppComponent {
 
-  tarefas: Tarefa[] = this._tarefasService.getAllTarefas();
-  totalTarefas: number = this.tarefas.length;
-  quantConcluidas: number = this.tarefas.filter(t => t.isConcluida).length;
   filtro: FiltroTarefas = FiltroTarefas.Todas;
   FiltroTarefas = FiltroTarefas; // expõe o enum para o template
+  textoInputTarefa: string = '';
+  @ViewChild('inputTarefa') inputTarefa!: ElementRef; // acessando a variável local do template diretamente
 
-  constructor(private _tarefasService: TarefasService) {}
+  get totalTarefas(): number {
+    return this.tarefas.length;
+  }
 
-  salvarTarefa(inputTarefa: HTMLInputElement) {
-    this.tarefas.push({
-      titulo: inputTarefa.value,
-      isConcluida: false
+  get quantConcluidas(): number {
+    return this.tarefas.filter(t => t.isConcluida).length;
+  }
+
+  get tarefas(): Tarefa[] {
+    return this._tarefasService.obterTarefas(this.filtro);
+  }
+
+  constructor(private _tarefasService: TarefaService) {}
+
+  adicionarTarefa() {
+    if (!this.textoInputTarefa.trim()) return; // evita tarefa vazia
+    this._tarefasService.adicionarTarefa({
+      titulo: this.textoInputTarefa,
+      isConcluida: false,
+      dataCriacao: new Date()
     });
-    this.totalTarefas++;
-    inputTarefa.value = '';
-    inputTarefa.focus();
+    this.textoInputTarefa = '';
+    this.inputTarefa.nativeElement.focus();
   }
 
   excluirTarefa(indiceTarefa: number) {
-    if(this.tarefas.at(indiceTarefa)?.isConcluida) this.quantConcluidas--;
-    this.tarefas.splice(indiceTarefa, 1);
-    this.totalTarefas--;
-  }
-
-  checkarTarefa(isConclusao: boolean) {
-    if(isConclusao) this.quantConcluidas++;
-    else this.quantConcluidas--;
+    this._tarefasService.excluirTarefa(indiceTarefa);
   }
 
 }
 
 export interface Tarefa {
     titulo: string,
-    isConcluida: boolean
+    isConcluida: boolean,
+    dataCriacao: Date
 }
 
 export enum FiltroTarefas {
@@ -49,3 +55,13 @@ export enum FiltroTarefas {
   Concluidas,
   Todas
 }
+
+/* TODO: Ideias Marina
+- adicionar prazo
+- adicionar flag de importância (3 níveis)
+- desabilitar botao de + se não tiver texto no input
+- trocar botao lixeira por um icone de X no canto superior direito da tarefa
+- Pressionar Enter no input já adiciona a tarefa.
+- Botão “Excluir todas as concluídas”.
+- Ordenação por data de criação, prazo ou alfabética.
+*/

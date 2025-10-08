@@ -3,20 +3,21 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { TarefaDeListaComponent } from './tarefa-de-lista/tarefa-de-lista.component';
+import { TarefaDeListaComponent } from './tarefa/tarefa-de-lista/tarefa-de-lista.component';
 
 import '@angular/common/locales/global/pt';
 import { FormsModule } from '@angular/forms';
+import { TarefaModule } from './tarefa/tarefa.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    TarefaDeListaComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    TarefaModule
   ],
   providers: [
     {

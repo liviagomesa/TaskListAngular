@@ -1,9 +1,9 @@
-<li *ngIf="mostrar" class="list-group-item d-flex justify-content-between align-items-center" (mouseover)="hovered = true" (mouseleave)="hovered = false" [class.bg-secondary-subtle]="hovered">
+<li class="list-group-item d-flex justify-content-between align-items-center" (mouseover)="hovered = true" (mouseleave)="hovered = false" [class.bg-secondary-subtle]="hovered">
   <div>
     <input class="form-check-input me-2" type="checkbox" [(ngModel)]="tarefa.isConcluida" [id]="indiceTarefa" (change)="checkarTarefa($event)">
     <label class="form-check-label" [for]="indiceTarefa" [style.text-decoration]="tarefa.isConcluida ? 'line-through' : 'none'" [class.text-body-secondary]="tarefa.isConcluida">{{ tarefa.titulo }}</label>
     <br>
-    <small class="text-body-secondary">{{ hoje | date }} — X dias atrás</small>
+    <small class="text-body-secondary">{{ tarefa.dataCriacao | date }} — {{ tarefa.dataCriacao | diasDesde }} dias atrás</small>
   </div>
   <button class="btn btn-outline-danger" (click)="emitirEventoExclusao()"><i class="bi bi-trash"></i></button>
 </li>
