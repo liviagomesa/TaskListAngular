@@ -1,32 +1,66 @@
-<div class="px-4 py-5 my-5">
+<main class="container py-3 py-md-4 py-lg-5">
   <div class="text-center">
     <h1 class="display-5 fw-bold text-body-emphasis mb-4">Gerenciador de tarefas</h1>
 
-    <div class="d-flex justify-content-center gap-2">
-      <div class="col-lg-5 col-9">
-        <input type="text" class="form-control" placeholder="Título da tarefa" [(ngModel)]="textoInputTarefa" autofocus #inputTarefa>
+    <div class="row g-2 justify-content-center">
+      <div class="col-lg-6 col-md-8 col-12">
+        <input type="text" class="form-control" name="titulo" placeholder="Título da tarefa" [(ngModel)]="textoInputTarefa" autofocus #inputTarefa (keydown.enter)="adicionarTarefa()">
+      </div>
+      <div class="col-lg-2 col-md-3 col-12">
+        <input type="date" class="form-control" name="prazo" placeholder="Prazo" [(ngModel)]="textoInputPrazo">
+      </div>
+      <div class="col-lg-2 col-md-3 col">
+        <select name="importancia" id="importancia" [(ngModel)]="importanciaTarefa" class="form-select">
+          <option selected disabled [ngValue]="null">Importância</option>
+          <!-- O ngValue permite associar um objeto/enum ao valor, não apenas strings (como em value) -->
+          <option *ngFor="let i of opcoesImportancia" [ngValue]="i">{{ i }}</option>
+        </select>
       </div>
       <div class="col-auto">
-        <button class="btn btn-primary mb-3" (click)="adicionarTarefa()">+</button>
+        <button class="btn btn-primary" (click)="adicionarTarefa()" [disabled]="!this.textoInputTarefa.trim()">+</button>
       </div>
     </div>
   </div>
 
-  <h2 class="fw-bold text-body-emphasis mb-4 mt-5 text-center">Tarefas cadastradas</h2>
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-10 col-12">
+      <h2 class="fw-bold text-body-emphasis mb-4 mt-5 text-center">Tarefas cadastradas</h2>
 
-  <div class="d-flex justify-content-center mb-4">
-    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-      <ng-container *ngFor="let f of filtros">
-        <input type="radio" class="btn-check" name="filtroTarefas" [id]="f | slugify" autocomplete="off" [(ngModel)]="filtroAplicado" [value]="f">
-        <label class="btn btn-outline-primary" [for]="f | slugify">{{ f }}</label>
-      </ng-container>
+      <div class="row mb-4">
+        <div class="col d-flex align-items-center">
+          <i class="bi bi-filter-circle-fill pe-3 ps-1 fs-5 text-primary"></i>
+          <div class="btn-group" role="group">
+            <ng-container *ngFor="let f of filtros">
+              <input type="radio" class="btn-check" name="filtroTarefas" [id]="f | slugify" autocomplete="off" [(ngModel)]="filtroAplicado" [value]="f">
+              <label class="btn btn-outline-primary" [for]="f | slugify">{{ f }}</label>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-danger" (click)="excluirConcluidas()">Excluir concluídas</button>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col d-flex align-items-center">
+          <i class="bi bi-sort-up pe-3 ps-1 fs-5 text-primary"></i>
+          <div class="btn-group" role="group">
+            <input type="radio" class="btn-check" name="ordenacao" id="dataDeCriacao" autocomplete="off" [(ngModel)]="ordemAplicada" value="dataDeCriacao">
+            <label class="btn btn-outline-primary" for="dataDeCriacao">Data de criação</label>
+            <input type="radio" class="btn-check" name="ordenacao" id="alfabetica" autocomplete="off" [(ngModel)]="ordemAplicada" value="alfabetica">
+            <label class="btn btn-outline-primary" for="alfabetica">Alfabética</label>
+            <input type="radio" class="btn-check" name="ordenacao" id="prazo" autocomplete="off" [(ngModel)]="ordemAplicada" value="prazo">
+            <label class="btn btn-outline-primary" for="prazo">Prazo</label>
+          </div>
+        </div>
+      </div>
+
+      <ul class="list-group">
+        <app-tarefa-de-lista *ngFor="let t of tarefas; index as i" [tarefa]="t" [indiceTarefa]="i" (emissorEventoExcluir)="excluirTarefa(i)"></app-tarefa-de-lista>
+      </ul>
+
+      <div class="text-center mt-2" [class.text-success]="totalTarefas != 0 && quantConcluidas == totalTarefas">{{ quantConcluidas }}/{{ totalTarefas }} tarefa(s) concluída(s)</div>
     </div>
   </div>
 
-  <ul class="list-group col-lg-6 col-10 mx-auto">
-    <app-tarefa-de-lista *ngFor="let t of tarefas; index as i" [tarefa]="t" [indiceTarefa]="i" (emissorEventoExcluir)="excluirTarefa(i)"></app-tarefa-de-lista>
-  </ul>
-
-  <div class="text-center mt-2" [class.text-success]="totalTarefas != 0 && quantConcluidas == totalTarefas">{{ quantConcluidas }}/{{ totalTarefas }} tarefa(s) concluída(s)</div>
-
-</div>
+</main>

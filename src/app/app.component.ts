@@ -10,8 +10,12 @@ export class AppComponent {
 
   filtroAplicado: FiltroTarefas = FiltroTarefas.Todas; // "Todas" ou "Pendentes" ou "Concluídas"
   textoInputTarefa: string = '';
+  textoInputPrazo: string = ''; // O input[type=date] entrega uma string e o Angular não converte automaticamente para Date
+  importanciaTarefa: ImportanciaTarefa | null = null;
   @ViewChild('inputTarefa') inputTarefa!: ElementRef; // acessando a variável local do template diretamente
   filtros = Object.values(FiltroTarefas); // [ "Todas", "Pendentes", "Concluídas" ]
+  opcoesImportancia = Object.values(ImportanciaTarefa);
+  ordemAplicada: string = '';
 
   get totalTarefas(): number {
     return this.tarefas.length;
@@ -22,25 +26,31 @@ export class AppComponent {
   }
 
   get tarefas(): Tarefa[] {
-    return this._tarefaService.obterTarefas(this.filtroAplicado);
+    return this._tarefaService.obterTarefas(this.filtroAplicado, this.ordemAplicada);
   }
 
   constructor(private _tarefaService: TarefaService) {
   }
 
-  adicionarTarefa() {
+  protected adicionarTarefa(): void {
     if (!this.textoInputTarefa.trim()) return; // evita tarefa vazia
     this._tarefaService.adicionarTarefa({
       titulo: this.textoInputTarefa,
       isConcluida: false,
-      dataCriacao: new Date()
+      dataCriacao: new Date(),
+      prazo: this.textoInputPrazo ? new Date(this.textoInputPrazo) : null,
+      importancia: this.importanciaTarefa
     });
     this.textoInputTarefa = '';
     this.inputTarefa.nativeElement.focus();
   }
 
-  excluirTarefa(indiceTarefa: number) {
+  protected excluirTarefa(indiceTarefa: number): void {
     this._tarefaService.excluirTarefa(indiceTarefa);
+  }
+
+  protected excluirConcluidas(): void {
+    this._tarefaService.excluirConcluidas();
   }
 
 }
@@ -48,7 +58,9 @@ export class AppComponent {
 export interface Tarefa {
     titulo: string,
     isConcluida: boolean,
-    dataCriacao: Date
+    dataCriacao: Date,
+    prazo: Date | null,
+    importancia: ImportanciaTarefa | null
 }
 
 export enum FiltroTarefas {
@@ -57,12 +69,8 @@ export enum FiltroTarefas {
   Concluidas = 'Concluídas'
 }
 
-/* TODO: Ideias Marina
-- adicionar prazo
-- adicionar flag de importância (3 níveis)
-- desabilitar botao de + se não tiver texto no input
-- trocar botao lixeira por um icone de X no canto superior direito da tarefa
-- Pressionar Enter no input já adiciona a tarefa.
-- Botão “Excluir todas as concluídas”.
-- Ordenação por data de criação, prazo ou alfabética.
-*/
+export enum ImportanciaTarefa {
+  Alta = 'Alta',
+  Media = 'Média',
+  Baixa = 'Baixa'
+}
