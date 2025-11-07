@@ -1,0 +1,48 @@
+<div class="container py-3 py-md-4 py-lg-5">
+
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-10 col-12">
+      <h1 class="fw-bold text-body-emphasis mb-4 text-center">Tarefas cadastradas</h1>
+
+      <div class="row mb-4">
+        <div class="col d-flex align-items-center">
+          <i class="bi bi-filter-circle-fill pe-3 ps-1 fs-5 text-primary"></i>
+          <div class="btn-group" role="group">
+            <ng-container *ngFor="let f of filtros">
+              <input type="radio" class="btn-check" name="filtroTarefas" [id]="f | slugify" autocomplete="off" [(ngModel)]="filtroAplicado" [value]="f">
+              <label class="btn btn-outline-primary" [for]="f | slugify">{{ f }}</label>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-danger" (click)="excluirConcluidas()">Excluir concluídas</button>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col d-flex align-items-center">
+          <i class="bi bi-sort-up pe-3 ps-1 fs-5 text-primary"></i>
+          <div class="btn-group" role="group">
+            <input type="radio" class="btn-check" name="ordenacao" id="dataDeCriacao" autocomplete="off" [(ngModel)]="ordemAplicada" value="dataDeCriacao">
+            <label class="btn btn-outline-primary" for="dataDeCriacao">Data de criação</label>
+            <input type="radio" class="btn-check" name="ordenacao" id="alfabetica" autocomplete="off" [(ngModel)]="ordemAplicada" value="alfabetica">
+            <label class="btn btn-outline-primary" for="alfabetica">Alfabética</label>
+            <input type="radio" class="btn-check" name="ordenacao" id="prazo" autocomplete="off" [(ngModel)]="ordemAplicada" value="prazo">
+            <label class="btn btn-outline-primary" for="prazo">Prazo</label>
+          </div>
+        </div>
+      </div>
+
+      <ul class="list-group">
+        <app-tarefa-card *ngFor="let t of tarefas; index as i" [tarefa]="t"></app-tarefa-card>
+      </ul>
+
+      <div class="text-center mt-2" [class.text-success]="totalTarefas != 0 && quantConcluidas == totalTarefas">{{ quantConcluidas }}/{{ totalTarefas }} tarefa(s) concluída(s)</div>
+
+      <div class="text-center mt-2">
+        Você está na página {{ pagina }}
+        <i class="bi bi-arrow-right-circle ms-1" (click)="proximaPagina()" style="cursor: pointer;"></i>
+      </div>
+    </div>
+  </div>
+</div>

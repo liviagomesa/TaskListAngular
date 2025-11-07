@@ -1,0 +1,22 @@
+<div class="modal modal-sheet bg-body-secondary min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="modal-dialog">
+    <div class="modal-content rounded-4 shadow">
+      <div class="modal-header p-5 pb-4 border-bottom-0">
+        <h1 class="fw-bold mb-0 fs-2">Entre na sua conta</h1>
+      </div>
+      <div class="modal-body p-5 pt-0">
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com" [(ngModel)]="usuario.email" (keyup.enter)="fazerLogin()">
+          <label for="floatingInput">E-mail</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password" [(ngModel)]="usuario.senha" (keyup.enter)="fazerLogin()">
+          <label for="floatingPassword">Senha</label>
+        </div>
+        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" (click)="fazerLogin()">Entrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,24 @@
+<div class="container py-3 py-md-4 py-lg-5">
+  <div class="text-center">
+    <h1 class="fw-bold text-body-emphasis mb-4">Formulário de tarefa</h1>
+
+    <div class="row g-2 justify-content-center">
+      <div class="col-lg-6 col-md-8 col-12">
+        <input type="text" class="form-control" name="titulo" placeholder="Título da tarefa" [(ngModel)]="tarefa.titulo" autofocus #inputTitulo (keydown.enter)="save()" (input)="campoAlterado = true">
+      </div>
+      <div class="col-lg-2 col-md-3 col-12">
+        <input type="date" class="form-control" name="prazo" placeholder="Prazo" [(ngModel)]="textoInputPrazo" (input)="campoAlterado = true">
+      </div>
+      <div class="col-lg-2 col-md-3 col">
+        <select name="importancia" id="importancia" [(ngModel)]="tarefa.importancia" class="form-select" (select)="campoAlterado = true">
+          <option selected disabled [ngValue]="null">Importância</option>
+          <!-- O ngValue permite associar um objeto/enum ao valor, não apenas strings (como em value) -->
+          <option *ngFor="let i of opcoesImportancia" [ngValue]="i">{{ i }}</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary" (click)="save()" [disabled]="!tarefa.titulo.trim()">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>

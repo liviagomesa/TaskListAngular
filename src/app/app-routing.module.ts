@@ -1,7 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NotFoundComponent } from './standalone-pages/not-found/not-found.component';
+import { SecurityGuard } from './provided-in-root/security.guard';
+import { LoginComponent } from './standalone-pages/login/login.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: 'tarefas',
+    loadChildren: () => import('./lazy-loaded-modules/tarefa/tarefa.module').then(m => m.TarefaModule),
+    canActivate: [SecurityGuard], canLoad: [SecurityGuard]
+  },
+  { path: '', redirectTo: '/tarefas', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'usuario',
+    loadChildren: () => import('./lazy-loaded-modules/usuario/usuario.module').then(m => m.UsuarioModule),
+    canActivate: [SecurityGuard], canLoad: [SecurityGuard]
+  },
+  { path: '**', component: NotFoundComponent }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

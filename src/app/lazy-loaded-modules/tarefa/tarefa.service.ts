@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FiltroTarefas, ImportanciaTarefa, Tarefa } from '../app.component';
+import { FiltroTarefas } from './enums/filtro-tarefas.enum';
+import { ImportanciaTarefa } from './enums/importancia-tarefa.enum';
+import { Tarefa } from './tarefa.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +10,7 @@ export class TarefaService {
 
   private _tarefas: Tarefa[] = [
     {
+      id: 1,
       titulo: 'Limpar quintal',
       isConcluida: false,
       dataCriacao: new Date(2025, 9, 1),
@@ -15,6 +18,7 @@ export class TarefaService {
       importancia: ImportanciaTarefa.Alta
     },
     {
+      id: 2,
       titulo: 'Ir ao médico',
       isConcluida: true,
       dataCriacao: new Date(2025, 9, 2),
@@ -63,16 +67,38 @@ export class TarefaService {
     }
   }
 
-  adicionarTarefa(tarefa: Tarefa): number {
-    return this._tarefas.push(tarefa); // retorna o novo tamanho do array
+  save(tarefa: Tarefa): Tarefa {
+    if (!tarefa.id) {
+      tarefa.id = this._tarefas.length == 0 ? 1 : Math.max(...this._tarefas.map((t: Tarefa) => t.id as number)) + 1;
+      this._tarefas.push(tarefa);
+    } else {
+      const index: number = this.getIndexById(tarefa.id);
+      this._tarefas[index] = tarefa;
+    }
+    return tarefa;
   }
 
-  excluirTarefa(indiceTarefa: number): Tarefa[] {
-    return this._tarefas.splice(indiceTarefa, 1); // retorna um array com o elemento excluído
+  deleteById(id: number): boolean {
+    const index: number = this.getIndexById(id);
+    if (index == -1) return false;
+    this._tarefas.splice(index, 1);
+    return true;
   }
 
   excluirConcluidas(): void {
-    this._tarefas = this._tarefas.filter((tarefa) => !tarefa.isConcluida);
+    this._tarefas = this._tarefas.filter((t: Tarefa) => !t.isConcluida);
+  }
+
+  getById(id: number): Tarefa | undefined {
+    return this._tarefas.find((t: Tarefa) => t.id == id);
+  }
+
+  getIndexById(id: number): number {
+    return this._tarefas.findIndex((t: Tarefa) => t.id == id);
+  }
+
+  toggleConclusaoById(id: number): void {
+    this._tarefas[this.getIndexById(id)].isConcluida = !this._tarefas[this.getIndexById(id)].isConcluida;
   }
 
 }

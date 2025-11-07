@@ -1,76 +1,27 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { TarefaService } from './tarefa/tarefa.service';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { SecurityService } from './provided-in-root/security.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
+  protected usuarioLogado: boolean = false;
+  private inscricao!: Subscription;
 
-  filtroAplicado: FiltroTarefas = FiltroTarefas.Todas; // "Todas" ou "Pendentes" ou "Concluídas"
-  textoInputTarefa: string = '';
-  textoInputPrazo: string = ''; // O input[type=date] entrega uma string e o Angular não converte automaticamente para Date
-  importanciaTarefa: ImportanciaTarefa | null = null;
-  @ViewChild('inputTarefa') inputTarefa!: ElementRef; // acessando a variável local do template diretamente
-  filtros = Object.values(FiltroTarefas); // [ "Todas", "Pendentes", "Concluídas" ]
-  opcoesImportancia = Object.values(ImportanciaTarefa);
-  ordemAplicada: string = '';
-
-  get totalTarefas(): number {
-    return this.tarefas.length;
+  ngOnInit(): void {
+    this.inscricao = this.authService.logadoEmitter.subscribe((logado: boolean) => {
+      if (logado) this.usuarioLogado = true;
+      else this.usuarioLogado = false;
+    })
   }
 
-  get quantConcluidas(): number {
-    return this.tarefas.filter(t => t.isConcluida).length;
+  constructor(private authService: SecurityService) {}
+
+  ngOnDestroy(): void {
+    this.inscricao.unsubscribe();
   }
 
-  get tarefas(): Tarefa[] {
-    return this._tarefaService.obterTarefas(this.filtroAplicado, this.ordemAplicada);
-  }
-
-  constructor(private _tarefaService: TarefaService) {
-  }
-
-  protected adicionarTarefa(): void {
-    if (!this.textoInputTarefa.trim()) return; // evita tarefa vazia
-    this._tarefaService.adicionarTarefa({
-      titulo: this.textoInputTarefa,
-      isConcluida: false,
-      dataCriacao: new Date(),
-      prazo: this.textoInputPrazo ? new Date(this.textoInputPrazo) : null,
-      importancia: this.importanciaTarefa
-    });
-    this.textoInputTarefa = '';
-    this.inputTarefa.nativeElement.focus();
-  }
-
-  protected excluirTarefa(indiceTarefa: number): void {
-    this._tarefaService.excluirTarefa(indiceTarefa);
-  }
-
-  protected excluirConcluidas(): void {
-    this._tarefaService.excluirConcluidas();
-  }
-
-}
-
-export interface Tarefa {
-    titulo: string,
-    isConcluida: boolean,
-    dataCriacao: Date,
-    prazo: Date | null,
-    importancia: ImportanciaTarefa | null
-}
-
-export enum FiltroTarefas {
-  Todas = 'Todas',
-  Pendentes = 'Pendentes',
-  Concluidas = 'Concluídas'
-}
-
-export enum ImportanciaTarefa {
-  Alta = 'Alta',
-  Media = 'Média',
-  Baixa = 'Baixa'
 }

@@ -1,0 +1,21 @@
+<header class="p-3 border-bottom">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+      <a routerLink="" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+        <img src="../assets/meu-task-manager.png" alt="logotipo meu task manager" height="32" class="me-3" />
+      </a>
+
+      <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+        <li><a routerLink="/tarefas/new" routerLinkActive="active" class="nav-link px-2">Criar tarefa</a></li>
+        <li><a routerLink="/tarefas" routerLinkActive="active" [queryParams]="{ pagina: 1 }" class="nav-link px-2" [routerLinkActiveOptions]="{
+          paths: 'exact',
+          queryParams: 'ignored',
+          matrixParams: 'ignored',
+          fragment: 'ignored'
+        }">Minhas tarefas</a></li>
+      </ul>
+
+      <app-user-dropdown></app-user-dropdown>
+    </div>
+  </div>
+</header>

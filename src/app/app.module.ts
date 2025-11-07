@@ -3,23 +3,30 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { TarefaDeListaComponent } from './tarefa/tarefa-de-lista/tarefa-de-lista.component';
 
 import '@angular/common/locales/global/pt';
 import { FormsModule } from '@angular/forms';
-import { TarefaModule } from './tarefa/tarefa.module';
-import { SharedModule } from './shared/shared.module';
+import { TarefaModule } from './lazy-loaded-modules/tarefa/tarefa.module';
+import { HeaderComponent } from './root-components/header/header.component';
+import { NotFoundComponent } from './standalone-pages/not-found/not-found.component';
+import { LoginComponent } from './standalone-pages/login/login.component';
+import { UserDropdownComponent } from './root-components/user-dropdown/user-dropdown.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HeaderComponent,
+    NotFoundComponent,
+    LoginComponent,
+    UserDropdownComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     TarefaModule,
-    SharedModule
+    NgbModule
   ],
   providers: [
     {
