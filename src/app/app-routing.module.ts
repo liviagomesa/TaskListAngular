@@ -7,13 +7,13 @@ import { LoginComponent } from './standalone-pages/login/login.component';
 const routes: Routes = [
   { path: 'tarefas',
     loadChildren: () => import('./lazy-loaded-modules/tarefa/tarefa.module').then(m => m.TarefaModule),
-    canActivate: [SecurityGuard], canLoad: [SecurityGuard]
+    /*canActivate: [SecurityGuard], canLoad: [SecurityGuard]*/ // RETIRADO - LOGIN DESATIVADO TEMPORARIAMENTE PARA TESTES
   },
   { path: '', redirectTo: '/tarefas', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'usuario',
     loadChildren: () => import('./lazy-loaded-modules/usuario/usuario.module').then(m => m.UsuarioModule),
-    canActivate: [SecurityGuard], canLoad: [SecurityGuard]
+    /*canActivate: [SecurityGuard], canLoad: [SecurityGuard]*/ // RETIRADO - LOGIN DESATIVADO TEMPORARIAMENTE PARA TESTES
   },
   { path: '**', component: NotFoundComponent }
 ];

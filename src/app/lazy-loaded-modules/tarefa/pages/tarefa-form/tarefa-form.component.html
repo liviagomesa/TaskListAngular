@@ -4,7 +4,7 @@
 
     <div class="row g-2 justify-content-center">
       <div class="col-lg-6 col-md-8 col-12">
-        <input type="text" class="form-control" name="titulo" placeholder="Título da tarefa" [(ngModel)]="tarefa.titulo" autofocus #inputTitulo (keydown.enter)="save()" (input)="campoAlterado = true">
+        <input type="text" class="form-control" name="titulo" placeholder="Título da tarefa" [(ngModel)]="tarefa.titulo" autofocus #inputTitulo (keydown.enter)="onSubmit()" (input)="campoAlterado = true">
       </div>
       <div class="col-lg-2 col-md-3 col-12">
         <input type="date" class="form-control" name="prazo" placeholder="Prazo" [(ngModel)]="textoInputPrazo" (input)="campoAlterado = true">
@@ -17,7 +17,7 @@
         </select>
       </div>
       <div class="col-auto">
-        <button class="btn btn-primary" (click)="save()" [disabled]="!tarefa.titulo.trim()">Salvar</button>
+        <button class="btn btn-primary" (click)="onSubmit()" [disabled]="!tarefa.titulo.trim()">Salvar</button>
       </div>
     </div>
   </div>

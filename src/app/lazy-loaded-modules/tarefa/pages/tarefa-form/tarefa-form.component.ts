@@ -5,8 +5,8 @@ import { TarefaService } from '../../tarefa.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { novaTarefa } from '../../tarefa.model';
-import { UtilsService } from 'src/app/provided-in-root/utils.service';
-import { FormPage } from 'src/app/provided-in-root/form-page.model';
+import { Utils } from 'src/app/provided-in-root/utils';
+import { BaseFormComponent } from 'src/app/shared/base-form/base-form.component';
 
 @Component({
   selector: 'app-tarefa-form',
@@ -14,7 +14,7 @@ import { FormPage } from 'src/app/provided-in-root/form-page.model';
   styleUrls: ['./tarefa-form.component.scss']
 })
 // caso rota de edição, antes de carregar este componente, o resolver busca a tarefa do id fornecido e salva em activatedRoute.data (que é um observable)
-export class TarefaFormComponent extends FormPage implements OnInit, OnDestroy {
+export class TarefaFormComponent extends BaseFormComponent implements OnInit, OnDestroy {
 
   // TODO: Ver se algo precisa ser feito com esse prazo!
   textoInputPrazo!: string; // O input[type=date] entrega uma string e o Angular não converte automaticamente para Date
@@ -23,8 +23,11 @@ export class TarefaFormComponent extends FormPage implements OnInit, OnDestroy {
   inscricao!: Subscription;
   tarefa!: Tarefa; // vem do resolver
 
-  constructor(private _tarefaService: TarefaService, private activatedRoute: ActivatedRoute, private router: Router, private utilsService: UtilsService) {
-    super();
+  constructor(
+    private _tarefaService: TarefaService,
+    activatedRoute: ActivatedRoute,
+    router: Router) {
+    super(router, activatedRoute);
   }
 
   ngOnDestroy(): void {
@@ -32,7 +35,8 @@ export class TarefaFormComponent extends FormPage implements OnInit, OnDestroy {
   }
 
   // obs.: se o id for inválido, este método nem chegará a ser executado, pois o resolver roda antes e encaminha para not-found
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
     // activatedRoute.data sempre emite quando a rota é aberta, em qualquer rota! mas não necessariamente existe o campo t
     this.inscricao = this.activatedRoute.data.subscribe(
       (objetoEmitidoRota: any) => {
@@ -44,12 +48,9 @@ export class TarefaFormComponent extends FormPage implements OnInit, OnDestroy {
     )
   }
 
-  protected save(): void {
-    if (!this.tarefa.titulo.trim()) return;
-    this.tarefa.prazo = this.utilsService.parseDateLocal(this.textoInputPrazo);
+  override submit(): void {
+    //this.tarefa.prazo = Utils.parseDateLocal(this.textoInputPrazo);
     this._tarefaService.save(this.tarefa);
-    this.formFoiSalvo = true;
-    this.router.navigate(['/tarefas']);
   }
 
 }
