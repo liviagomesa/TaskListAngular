@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Usuario } from '../lazy-loaded-modules/usuario/usuario.model';
 import { Router } from '@angular/router';
+import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
 
 @Injectable({
   providedIn: 'root'

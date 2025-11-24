@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
-import { SecurityService } from 'src/app/provided-in-root/security.service';
+import { SecurityService } from 'src/app/provided-in-root/security-and-guards/security.service';
 
 @Component({
   selector: 'app-login',

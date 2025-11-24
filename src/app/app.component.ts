@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { SecurityService } from './provided-in-root/security.service';
+import { SecurityService } from './provided-in-root/security-and-guards/security.service';
 
 @Component({
   selector: 'app-root',

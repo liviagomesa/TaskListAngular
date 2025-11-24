@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NotFoundComponent } from './standalone-pages/not-found/not-found.component';
-import { SecurityGuard } from './provided-in-root/security.guard';
 import { LoginComponent } from './standalone-pages/login/login.component';
 
 const routes: Routes = [

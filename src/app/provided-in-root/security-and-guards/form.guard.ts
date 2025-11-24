@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { FormPage } from './form-page.model';
+import { BaseFormComponent } from 'src/app/shared/base-form/base-form.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FormGuard implements CanDeactivate<FormPage> {
+export class FormGuard implements CanDeactivate<BaseFormComponent> {
   canDeactivate(
-    component: FormPage,
+    component: BaseFormComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {

@@ -4,7 +4,7 @@ import { ListaTarefasComponent } from './pages/lista-tarefas/lista-tarefas.compo
 import { TarefaFormComponent } from './pages/tarefa-form/tarefa-form.component';
 import { TarefaDetailsComponent } from './pages/tarefa-details/tarefa-details.component';
 import { TarefaResolver } from './tarefa.resolver';
-import { FormGuard } from 'src/app/provided-in-root/form.guard';
+import { FormGuard } from 'src/app/provided-in-root/security-and-guards/form.guard';
 
 const routes: Routes = [
   { path: '', component: ListaTarefasComponent },
