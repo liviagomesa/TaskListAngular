@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Tarefa, novaTarefa } from '../../tarefa.model';
+import { Tarefa } from '../../tarefa.model';
 import { TarefaService } from '../../tarefa.service';
 import { Subscription } from 'rxjs';
 
@@ -14,7 +14,7 @@ export class TarefaDetailsComponent implements OnInit {
   tarefa!: Tarefa; // vem do resolver
   inscricao!: Subscription;
 
-  constructor(private _tarefaService: TarefaService, private activatedRoute: ActivatedRoute, private router: Router) { }
+  constructor(private tarefaService: TarefaService, private activatedRoute: ActivatedRoute, private router: Router) { }
 
   ngOnDestroy(): void {
     this.inscricao.unsubscribe();
@@ -25,13 +25,13 @@ export class TarefaDetailsComponent implements OnInit {
     // activatedRoute.data sempre emite quando a rota é aberta, em qualquer rota! mas não necessariamente existe o campo t
     this.inscricao = this.activatedRoute.data.subscribe(
       (objetoEmitidoRota: any) => {
-        this.tarefa = objetoEmitidoRota['t'] ?? novaTarefa();
+        this.tarefa = objetoEmitidoRota['entity'] ?? this.tarefaService.newEntity();
       }
     )
   }
 
   toggleConclusao() {
-    this.tarefa.isConcluida = !this.tarefa.isConcluida;
+    this.tarefa.concluida = !this.tarefa.concluida;
   }
 
 }

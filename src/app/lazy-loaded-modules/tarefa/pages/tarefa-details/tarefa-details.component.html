@@ -8,9 +8,9 @@
       <div class="modal-body p-5 pt-0">
 
         <div class="text-center mb-4">
-          <span class="badge rounded-pill bg-primary me-2">Prioridade {{ tarefa.importancia }}</span>
-          <span class="badge rounded-pill" [ngClass]="tarefa.isConcluida ? 'bg-success' : 'bg-warning'">
-            {{ tarefa.isConcluida ? 'Concluída' : 'Em andamento' }}
+          <span *ngIf="tarefa.importancia" class="badge rounded-pill bg-primary me-2">Importância {{ tarefa.importancia | importanciaTarefa }}</span>
+          <span class="badge rounded-pill" [ngClass]="tarefa.concluida ? 'bg-success' : 'bg-warning'">
+            {{ tarefa.concluida ? 'Concluída' : 'Em andamento' }}
           </span>
         </div>
 
@@ -44,8 +44,8 @@
 
           <button class="btn btn-outline-primary" [routerLink]="['/tarefas', tarefa.id, 'edit']">✏️ Editar</button>
 
-          <button class="btn" [ngClass]="tarefa.isConcluida ? 'btn-danger' : 'btn-success'" (click)="toggleConclusao()">
-            {{ tarefa.isConcluida ? "Reabrir" : "✅ Concluir" }}
+          <button class="btn" [ngClass]="tarefa.concluida ? 'btn-danger' : 'btn-success'" (click)="toggleConclusao()">
+            {{ tarefa.concluida ? "Reabrir" : "✅ Concluir" }}
           </button>
 
         </div>

@@ -34,10 +34,10 @@
       </div>
 
       <ul class="list-group">
-        <app-tarefa-card *ngFor="let t of tarefas; index as i" [tarefa]="t"></app-tarefa-card>
+        <app-tarefa-card *ngFor="let t of tarefas$ | async; index as i" [tarefa]="t"></app-tarefa-card>
       </ul>
 
-      <div class="text-center mt-2" [class.text-success]="totalTarefas != 0 && quantConcluidas == totalTarefas">{{ quantConcluidas }}/{{ totalTarefas }} tarefa(s) concluída(s)</div>
+      <div class="text-center mt-2" [class.text-success]="(totalTarefas$ | async) != 0 && (quantConcluidas$ | async) == (totalTarefas$ | async)">{{ quantConcluidas$ | async }}/{{ totalTarefas$ | async }} tarefa(s) concluída(s)</div>
 
       <div class="text-center mt-2">
         Você está na página {{ pagina }}

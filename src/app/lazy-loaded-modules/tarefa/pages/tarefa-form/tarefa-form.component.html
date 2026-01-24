@@ -1,24 +1,105 @@
-<div class="container py-3 py-md-4 py-lg-5">
-  <div class="text-center">
-    <h1 class="fw-bold text-body-emphasis mb-4">Formulário de tarefa</h1>
+<h1 class="h2 text-center pb-5 fw-bold text-body-emphasis">Formulário de tarefa</h1>
+<form class="row g-3" (ngSubmit)="onSubmit()" [formGroup]="form">
 
-    <div class="row g-2 justify-content-center">
-      <div class="col-lg-6 col-md-8 col-12">
-        <input type="text" class="form-control" name="titulo" placeholder="Título da tarefa" [(ngModel)]="tarefa.titulo" autofocus #inputTitulo (keydown.enter)="onSubmit()" (input)="campoAlterado = true">
+  <!-- CAMPOS TÍTULO, PRAZO, IMPORTÂNCIA, TAGS E ANOTAÇÕES -->
+  <div class="row">
+
+    <!-- LADO ESQUERDO -->
+    <div class="col-12 col-md-6">
+      <div class="row">
+
+        <div class="col-12 mb-3">
+          <app-input-field formControlName="titulo" label="Título"></app-input-field> <!-- autofocus -->
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+          <app-input-field formControlName="prazo" label="Prazo" type="date"></app-input-field>
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+          <label for="importancia" class="form-label">Importância</label>
+          <select class="form-select" id="importancia" [ngClass]="getValidationClass('importancia')" formControlName="importancia">
+            <option selected disabled [ngValue]="null">Selecione...</option>
+            <option [value]="importancia" *ngFor="let importancia of opcoesImportancia">{{ importancia | importanciaTarefa }}</option>
+          </select>
+          <app-error-msg [control]="$any(form.get('importancia'))" label="Importância"></app-error-msg>
+        </div>
+
+        <div class="col-12 mb-3">
+          <label class="form-label" for="tags">Tags</label>
+          <!-- Input e botão -->
+          <div class="d-flex justify-space-between gap-3">
+            <div class="flex-grow-1">
+              <input type="text" class="form-control" id="tags" placeholder="Adicione tags à sua tarefa" formControlName="newTag" (keydown.enter)="addTag()" [ngClass]="getValidationClass('newTag')">
+            </div>
+            <button type="button" class="btn btn-primary" (click)="addTag()" [disabled]="!form.get('newTag')?.value || form.get('newTag')?.invalid"><i class="bi bi-plus-circle-fill"></i></button>
+          </div>
+          <!-- Erro do input -->
+          <app-error-msg [control]="$any(form.get('newTag'))" label="Tag"></app-error-msg>
+          <!-- Erros disparados ao adicionar control ao array de tags -->
+          <div class="campo-invalido form-text" *ngIf="form.get('tags')?.errors?.['duplicateTags']">Tags duplicadas não são permitidas</div>
+          <div class="campo-invalido form-text" *ngIf="form.get('tags')?.errors?.['maxTags']">Excedido número máximo permitido de tags</div>
+          <!-- Renderização das tags -->
+          <span class="badge text-bg-info me-3 mt-3" *ngFor="let tagControl of getTagsControls(); let i = index">
+            {{ tagControl.value }}
+            <i class="bi bi-x-lg action text-danger" (click)="removeTag(i)"></i>
+          </span>
+        </div>
+
       </div>
-      <div class="col-lg-2 col-md-3 col-12">
-        <input type="date" class="form-control" name="prazo" placeholder="Prazo" [(ngModel)]="textoInputPrazo" (input)="campoAlterado = true">
+    </div>
+
+    <!-- LADO DIREITO -->
+    <div class="col-12 col-md-6 d-flex flex-column mb-3">
+      <label for="anotacoes" class="form-label">Anotações</label>
+      <textarea class="form-control flex-grow-1" id="anotacoes" [ngClass]="getValidationClass('anotacoes')" formControlName="anotacoes"></textarea>
+      <app-error-msg [control]="$any(form.get('anotacoes'))" label="Anotações"></app-error-msg>
+    </div>
+
+  </div>
+
+
+  <div class="row mb-3">
+    <label class="form-label">Subtarefas</label>
+    <div class="col-auto">
+      <button type="button" class="btn btn-primary" (click)="addSubtarefa()" id="addSubtarefa">
+        <i class="bi bi-plus-circle-fill me-2"></i>
+        Adicionar subtarefa
+      </button>
+    </div>
+  </div>
+
+  <div formArrayName="subtarefas">
+    <div class="row" *ngFor="let subtarefa of getSubtarefasControls(); let i = index" [formGroupName]="i">
+      <hr>
+      <div class="col-12 col-md-6 mb-3">
+        <app-input-field formControlName="titulo" label="Título"></app-input-field>
       </div>
-      <div class="col-lg-2 col-md-3 col">
-        <select name="importancia" id="importancia" [(ngModel)]="tarefa.importancia" class="form-select" (select)="campoAlterado = true">
-          <option selected disabled [ngValue]="null">Importância</option>
-          <!-- O ngValue permite associar um objeto/enum ao valor, não apenas strings (como em value) -->
-          <option *ngFor="let i of opcoesImportancia" [ngValue]="i">{{ i }}</option>
-        </select>
+      <div class="col mb-3">
+        <app-input-field formControlName="prazo" label="Prazo" type="date"></app-input-field>
       </div>
-      <div class="col-auto">
-        <button class="btn btn-primary" (click)="onSubmit()" [disabled]="!tarefa.titulo.trim()">Salvar</button>
+      <div class="col-auto mb-3">
+        <label class="form-label col-12">Ações</label>
+        <div class="d-flex gap-3 align-items-center mt-1">
+          <input class="form-check-input action m-0" type="checkbox" formControlName="concluida">
+          <i class="bi bi-trash text-danger action" (click)="removeSubtarefa(i)"></i>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <div class="row justify-content-center mt-3">
+    <div class="col-auto conclusao py-2 px-3 text-bg-success">
+      <div class="form-check m-0">
+        <label for="conclusao" class="form-label m-0">Concluída</label>
+        <input id="conclusao" class="form-check-input action" type="checkbox" [ngClass]="getValidationClass('concluida')" formControlName="concluida">
+        <app-error-msg [control]="$any(form.get('concluida'))" label="Conclusão"></app-error-msg>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary">Enviar</button>
+  </div>
+
+</form>

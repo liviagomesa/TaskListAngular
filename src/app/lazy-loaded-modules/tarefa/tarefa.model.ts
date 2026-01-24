@@ -3,19 +3,29 @@ import { ImportanciaTarefa } from "./enums/importancia-tarefa.enum";
 export interface Tarefa {
     id: number | null,
     titulo: string,
-    isConcluida: boolean,
+    anotacoes: string | null,
+    concluida: boolean,
     dataCriacao: Date,
     prazo: Date | null,
-    importancia: ImportanciaTarefa | null
+    importancia: ImportanciaTarefa | null,
+    subtarefas: Subtarefa[] | null,
+    tags: string[] | null
 }
 
-export function novaTarefa(): Tarefa {
+export interface Subtarefa {
+  id: number | null,
+  titulo: string,
+  concluida: boolean,
+  dataCriacao: Date,
+  prazo: Date | null
+}
+
+export function novaSubtarefa(): Subtarefa {
   return {
     id: null,
     titulo: '',
-    isConcluida: false,
+    concluida: false,
     dataCriacao: new Date(),
-    prazo: null,
-    importancia: null
+    prazo: null
   };
 }

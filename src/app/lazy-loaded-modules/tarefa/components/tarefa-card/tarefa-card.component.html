@@ -1,13 +1,13 @@
 <li class="list-group-item" (mouseover)="hovered = true" (mouseleave)="hovered = false" [class.bg-secondary-subtle]="hovered">
   <div class="row align-items-center">
     <div class="col-auto">
-      <input class="form-check-input" type="checkbox" [(ngModel)]="tarefa.isConcluida" [id]="tarefa.id">
+      <input class="form-check-input" type="checkbox" [(ngModel)]="tarefa.concluida" [id]="tarefa.id">
     </div>
     <div class="col-auto ps-0">
       <i class="bi bi-flag-fill" [class]="flagColor"></i>
     </div>
     <div class="col flex-grow-1 p-0">
-      <label class="form-check-label" [for]="tarefa.id" [style.text-decoration]="tarefa.isConcluida ? 'line-through' : 'none'" [class.text-body-secondary]="tarefa.isConcluida">{{ tarefa.titulo }}</label>
+      <label class="form-check-label" [for]="tarefa.id" [style.text-decoration]="tarefa.concluida ? 'line-through' : 'none'" [class.text-body-secondary]="tarefa.concluida">{{ tarefa.titulo }}</label>
     </div>
     <div class="col-auto d-flex align-items-center actions">
       <i class="bi bi-eye" [routerLink]="['/tarefas', tarefa.id]"></i>

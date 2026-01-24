@@ -1,5 +1,5 @@
 export enum ImportanciaTarefa {
-  Alta = 'Alta',
-  Media = 'Média',
-  Baixa = 'Baixa'
+  Alta = 3,
+  Media = 2,
+  Baixa = 1
 }

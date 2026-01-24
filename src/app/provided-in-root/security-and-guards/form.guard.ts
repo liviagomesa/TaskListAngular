@@ -6,9 +6,9 @@ import { BaseFormComponent } from 'src/app/shared/base-form/base-form.component'
 @Injectable({
   providedIn: 'root'
 })
-export class FormGuard implements CanDeactivate<BaseFormComponent> {
+export class FormGuard implements CanDeactivate<BaseFormComponent<any>> {
   canDeactivate(
-    component: BaseFormComponent,
+    component: BaseFormComponent<any>,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {

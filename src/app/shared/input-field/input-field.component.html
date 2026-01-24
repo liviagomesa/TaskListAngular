@@ -1,1 +1,5 @@
-<p>input-field works!</p>
+<label [attr.for]="label | camelCase" class="form-label">{{ label }}</label>
+<input [type]="type" class="form-control" [id]="label | camelCase"
+  [(ngModel)]="value" [disabled]="disabled" (ngModelChange)="onChange($event)" (blur)="onTouched()"
+  [attr.inputmode]="inputmode" [mask]="mask" [ngClass]="getValidationClass()">
+<app-error-msg *ngIf="control" [control]="control" [label]="label"></app-error-msg>

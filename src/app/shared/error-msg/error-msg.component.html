@@ -1,1 +1,2 @@
-<p>error-msg works!</p>
+<div class="form-text" *ngIf="control?.status === 'PENDING'">Validando campo...</div>
+<div class="campo-invalido form-text" *ngIf="control?.touched && control?.invalid">{{ errorMsg }}</div>

@@ -5,13 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import '@angular/common/locales/global/pt';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TarefaModule } from './lazy-loaded-modules/tarefa/tarefa.module';
 import { HeaderComponent } from './root-components/header/header.component';
 import { NotFoundComponent } from './standalone-pages/not-found/not-found.component';
 import { LoginComponent } from './standalone-pages/login/login.component';
 import { UserDropdownComponent } from './root-components/user-dropdown/user-dropdown.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     AppRoutingModule,
     FormsModule,
     TarefaModule,
-    NgbModule
+    NgbModule,
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [
     {

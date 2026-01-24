@@ -5,18 +5,19 @@ import {
 } from '@angular/router';
 import { Tarefa } from './tarefa.model';
 import { TarefaService } from './tarefa.service';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TarefaResolver implements Resolve<Tarefa | undefined> {
-  resolve(route: ActivatedRouteSnapshot): Tarefa | undefined {
+export class TarefaResolver implements Resolve<Observable<Tarefa | undefined>> {
+  resolve(route: ActivatedRouteSnapshot): Observable<Tarefa | undefined> {
     const id = route.params['id'];
-    const tarefa: Tarefa | undefined = this.tarefaService.getById(id);
-    if (tarefa == undefined) {
-      this.router.navigate(['/not-found']);
-    }
-    return tarefa;
+    return this.tarefaService.getById(id).pipe(
+      tap(tarefa => {
+        if (!tarefa) this.router.navigate(['/not-found']);
+      })
+    );
   }
 
   constructor(private tarefaService: TarefaService, private router: Router) {}

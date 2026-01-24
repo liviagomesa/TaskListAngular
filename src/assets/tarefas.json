@@ -1,0 +1,39 @@
+[
+  {
+    "id": 1,
+    "titulo": "Limpar quintal",
+    "anotacoes": "A limpeza será feita antes de qualquer coisa pra garantir que a sujeira não se espalhe pela casa.",
+    "concluida": false,
+    "dataCriacao": "2025-10-01T03:00:00.000Z",
+    "prazo": "2025-11-20T03:00:00.000Z",
+    "importancia": 3,
+    "subtarefas": [
+      {
+        "id": 1,
+        "titulo": "Cortar a grama",
+        "concluida": false,
+        "dataCriacao": "2025-11-24T16:45:39.378Z",
+        "prazo": "2025-11-20T03:00:00.000Z"
+      },
+      {
+        "id": 2,
+        "titulo": "Tirar ervas daninhas",
+        "concluida": false,
+        "dataCriacao": "2025-11-24T16:45:39.378Z",
+        "prazo": "2025-11-20T03:00:00.000Z"
+      }
+    ],
+    "tags": ["Tag1", "Tag2"]
+  },
+  {
+    "id": 2,
+    "titulo": "Ir ao médico",
+    "anotacoes": "Endocrinologista ou clínico geral, o que conseguir horário primeiro.",
+    "concluida": true,
+    "dataCriacao": "2025-10-02T03:00:00.000Z",
+    "prazo": "2025-11-13T03:00:00.000Z",
+    "importancia": 1,
+    "subtarefas": null,
+    "tags": ["Tag1", "Tag2", "Tag3"]
+  }
+]

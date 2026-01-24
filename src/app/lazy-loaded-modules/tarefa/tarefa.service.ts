@@ -1,61 +1,70 @@
+import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { FiltroTarefas } from './enums/filtro-tarefas.enum';
 import { ImportanciaTarefa } from './enums/importancia-tarefa.enum';
 import { Tarefa } from './tarefa.model';
+import { map, Observable, Subscription } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TarefaService {
 
-  private _tarefas: Tarefa[] = [
-    {
-      id: 1,
-      titulo: 'Limpar quintal',
-      isConcluida: false,
-      dataCriacao: new Date(2025, 9, 1),
-      prazo: new Date(2025, 10, 20),
-      importancia: ImportanciaTarefa.Alta
-    },
-    {
-      id: 2,
-      titulo: 'Ir ao médico',
-      isConcluida: true,
-      dataCriacao: new Date(2025, 9, 2),
-      prazo: new Date(2025, 10, 13),
-      importancia: ImportanciaTarefa.Baixa
-    }
-  ]
+  inscricao!: Subscription;
 
-  constructor() { }
+  constructor(private activatedRoute: ActivatedRoute, private httpClient: HttpClient) { }
 
-  obterTarefas(filtro: FiltroTarefas, ordem: string): Tarefa[] {
-    this.ordenar(ordem);
+  newEntity(): Tarefa {
+    return {
+      id: null,
+      titulo: '',
+      anotacoes: null,
+      concluida: false,
+      dataCriacao: new Date(),
+      prazo: null,
+      importancia: null,
+      subtarefas: null,
+      tags: null
+    };
+  }
+
+  getTarefas(filtro?: FiltroTarefas, ordem?: string): Observable<Tarefa[]> {
+    return this.httpClient.get<Tarefa[]>('assets/tarefas.json').pipe(
+      map((response: Tarefa[]) => {
+        if (ordem) this.ordenar(response, ordem);
+        if (filtro) response = this.filtrar(response, filtro);
+        return response;
+      })
+    );
+  }
+
+  filtrar(tarefas: Tarefa[], filtro: FiltroTarefas): Tarefa[] {
     switch (filtro) {
       case FiltroTarefas.Todas:
-        return this._tarefas;
+        return tarefas;
       case FiltroTarefas.Pendentes:
-        return this._tarefas.filter(t => t.isConcluida == false);
+        return tarefas.filter(t => t.concluida == false);
       case FiltroTarefas.Concluidas:
-        return this._tarefas.filter(t => t.isConcluida == true);
+        return tarefas.filter(t => t.concluida == true);
       default:
-        return this._tarefas;
+        return tarefas;
     }
   }
 
-  ordenar(ordem: string) {
+  ordenar(tarefas: Tarefa[], ordem: string): void {
     switch (ordem) {
       case 'alfabetica':
-        this._tarefas.sort((a, b) => a.titulo.localeCompare(b.titulo));
+        tarefas.sort((a, b) => a.titulo.localeCompare(b.titulo));
         return;
       case 'dataDeCriacao':
         /* <0 → dataA vem antes de dataB
         0 → iguais
         >0 → dataA vem depois de dataB */
-        this._tarefas.sort((a, b) => a.dataCriacao.getTime() - b.dataCriacao.getTime());
+        tarefas.sort((a, b) => a.dataCriacao.getTime() - b.dataCriacao.getTime());
         return;
       case 'prazo':
-        this._tarefas.sort((a, b) => {
+        tarefas.sort((a, b) => {
           if (!a.prazo && !b.prazo) return 0;
           if (!a.prazo) return 1;
           if (!b.prazo) return -1;
@@ -67,38 +76,24 @@ export class TarefaService {
     }
   }
 
-  save(tarefa: Tarefa): Tarefa {
-    if (!tarefa.id) {
-      tarefa.id = this._tarefas.length == 0 ? 1 : Math.max(...this._tarefas.map((t: Tarefa) => t.id as number)) + 1;
-      this._tarefas.push(tarefa);
-    } else {
-      const index: number = this.getIndexById(tarefa.id);
-      this._tarefas[index] = tarefa;
-    }
-    return tarefa;
+  save(tarefa: Tarefa, id: number | null): void {
+    if (id) this.httpClient.put(`https://jsonplaceholder.typicode.com/posts/${id}`, tarefa).subscribe((answ: any) => console.log(answ));
+    else this.httpClient.post(`https://jsonplaceholder.typicode.com/posts`, tarefa).subscribe((answ: any) => console.log(answ));
   }
 
-  deleteById(id: number): boolean {
-    const index: number = this.getIndexById(id);
-    if (index == -1) return false;
-    this._tarefas.splice(index, 1);
-    return true;
+  deleteById(id: number): void {
+    this.httpClient.delete(`https://jsonplaceholder.typicode.com/posts/${id}`).subscribe((answ: any) => console.log(answ));
   }
 
   excluirConcluidas(): void {
-    this._tarefas = this._tarefas.filter((t: Tarefa) => !t.isConcluida);
+    this.httpClient.delete(`https://jsonplaceholder.typicode.com/posts/concluidas`).subscribe((answ: any) => console.log(answ));
   }
 
-  getById(id: number): Tarefa | undefined {
-    return this._tarefas.find((t: Tarefa) => t.id == id);
-  }
-
-  getIndexById(id: number): number {
-    return this._tarefas.findIndex((t: Tarefa) => t.id == id);
-  }
-
-  toggleConclusaoById(id: number): void {
-    this._tarefas[this.getIndexById(id)].isConcluida = !this._tarefas[this.getIndexById(id)].isConcluida;
+  getById(id: number): Observable<Tarefa | undefined> {
+    // TODO: Backend retorna a tarefa diretamente
+    return this.httpClient.get<Tarefa[]>('assets/tarefas.json').pipe(
+      map(tarefas => tarefas.find(t => t.id === id))
+    );
   }
 
 }

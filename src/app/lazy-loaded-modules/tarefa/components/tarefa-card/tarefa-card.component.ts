@@ -14,7 +14,7 @@ export class TarefaCardComponent implements OnInit {
   hovered: boolean = false;
   flagColor: string = '';
 
-  constructor(private _tarefaService: TarefaService) { }
+  constructor(private tarefaService: TarefaService) { }
 
   ngOnInit(): void {
     switch (this.tarefa.importancia) {
@@ -30,11 +30,10 @@ export class TarefaCardComponent implements OnInit {
     }
   }
 
-  protected excluirTarefa(): boolean {
+  protected excluirTarefa(): void {
     if (confirm("Tem certeza que deseja excluir esta tarefa? Essa ação não pode ser desfeita.")) {
-      return this._tarefaService.deleteById(this.tarefa.id as number);
+      this.tarefaService.deleteById(this.tarefa.id as number);
     }
-    return false;
   }
 
 }

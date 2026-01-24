@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FiltroTarefas } from '../../enums/filtro-tarefas.enum';
 import { Tarefa } from '../../tarefa.model';
 import { TarefaService } from '../../tarefa.service';
-import { Subscription } from 'rxjs';
+import { map, Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-lista-tarefas',
@@ -17,20 +17,12 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
   ordemAplicada: string = '';
   pagina!: number;
   inscricao!: Subscription;
+  // valores serão atribuidos no ngOnInit
+  tarefas$!: Observable<Tarefa[]>;
+  totalTarefas$!: Observable<number>;
+  quantConcluidas$!: Observable<number>;
 
-  get totalTarefas(): number {
-    return this.tarefas.length;
-  }
-
-  get quantConcluidas(): number {
-    return this.tarefas.filter(t => t.isConcluida).length;
-  }
-
-  get tarefas(): Tarefa[] {
-    return this._tarefaService.obterTarefas(this.filtroAplicado, this.ordemAplicada);
-  }
-
-  constructor(private _tarefaService: TarefaService, private activatedRoute: ActivatedRoute, private router: Router) {
+  constructor(private tarefaService: TarefaService, private activatedRoute: ActivatedRoute, private router: Router) {
   }
 
   ngOnDestroy(): void {
@@ -38,6 +30,15 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // inicializando observables
+    this.tarefas$ = this.tarefaService.getTarefas(this.filtroAplicado, this.ordemAplicada);
+    this.totalTarefas$ = this.tarefas$.pipe(
+      map((response: Tarefa[]) => response.length)
+    );
+    this.quantConcluidas$ = this.tarefas$.pipe(
+      map((response: Tarefa[]) => response.filter(t => t.concluida).length)
+    );
+
     this.inscricao = this.activatedRoute.queryParams.subscribe((params: any) => {
       const parametroPagina: number = params['pagina'];
       if (!parametroPagina) {
@@ -50,7 +51,7 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
   }
 
   protected excluirConcluidas(): void {
-    this._tarefaService.excluirConcluidas();
+    this.tarefaService.excluirConcluidas();
   }
 
   protected proximaPagina() {
