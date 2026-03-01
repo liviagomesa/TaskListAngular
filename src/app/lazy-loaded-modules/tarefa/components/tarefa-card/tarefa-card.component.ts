@@ -13,6 +13,8 @@ export class TarefaCardComponent implements OnInit {
   @Input() tarefa!: Tarefa;
   hovered: boolean = false;
   flagColor: string = '';
+  @Output() excluida = new EventEmitter<void>();
+  @Output() concluida = new EventEmitter<void>();
 
   constructor(private tarefaService: TarefaService) { }
 
@@ -32,8 +34,18 @@ export class TarefaCardComponent implements OnInit {
 
   protected excluirTarefa(): void {
     if (confirm("Tem certeza que deseja excluir esta tarefa? Essa ação não pode ser desfeita.")) {
-      this.tarefaService.deleteById(this.tarefa.id as number);
+      this.tarefaService.deleteById(this.tarefa.id as number).subscribe({
+        next: () => this.excluida.emit(),
+        error: erro => alert(`Erro na exclusão da tarefa: ${erro}`)
+      });
     }
+  }
+
+  protected checkTarefa(): void {
+    this.tarefaService.toggleConclusaoById(this.tarefa.id as number).subscribe({
+      next: () => this.concluida.emit(),
+      error: erro => alert(`Erro na conclusão da tarefa: ${erro}`)
+    });
   }
 
 }

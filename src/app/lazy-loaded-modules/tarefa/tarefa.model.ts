@@ -9,23 +9,20 @@ export interface Tarefa {
     prazo: Date | null,
     importancia: ImportanciaTarefa | null,
     subtarefas: Subtarefa[] | null,
-    tags: string[] | null
+    tags: Tag[] | null
 }
 
 export interface Subtarefa {
   id: number | null,
+  tarefaId: number | null,
   titulo: string,
   concluida: boolean,
   dataCriacao: Date,
   prazo: Date | null
 }
 
-export function novaSubtarefa(): Subtarefa {
-  return {
-    id: null,
-    titulo: '',
-    concluida: false,
-    dataCriacao: new Date(),
-    prazo: null
-  };
+export interface Tag {
+  id: number | null,
+  tarefaId: number | null,
+  nome: string
 }

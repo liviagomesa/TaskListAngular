@@ -4,43 +4,60 @@
     <div class="col-lg-6 col-md-10 col-12">
       <h1 class="fw-bold text-body-emphasis mb-4 text-center">Tarefas cadastradas</h1>
 
-      <div class="row mb-4">
-        <div class="col d-flex align-items-center">
-          <i class="bi bi-filter-circle-fill pe-3 ps-1 fs-5 text-primary"></i>
-          <div class="btn-group" role="group">
-            <ng-container *ngFor="let f of filtros">
-              <input type="radio" class="btn-check" name="filtroTarefas" [id]="f | slugify" autocomplete="off" [(ngModel)]="filtroAplicado" [value]="f">
-              <label class="btn btn-outline-primary" [for]="f | slugify">{{ f }}</label>
-            </ng-container>
-          </div>
-        </div>
-        <div class="col-auto">
-          <button class="btn btn-danger" (click)="excluirConcluidas()">Excluir concluídas</button>
-        </div>
-      </div>
+      <form [formGroup]="filterSortForm">
 
-      <div class="row mb-4">
-        <div class="col d-flex align-items-center">
-          <i class="bi bi-sort-up pe-3 ps-1 fs-5 text-primary"></i>
-          <div class="btn-group" role="group">
-            <input type="radio" class="btn-check" name="ordenacao" id="dataDeCriacao" autocomplete="off" [(ngModel)]="ordemAplicada" value="dataDeCriacao">
-            <label class="btn btn-outline-primary" for="dataDeCriacao">Data de criação</label>
-            <input type="radio" class="btn-check" name="ordenacao" id="alfabetica" autocomplete="off" [(ngModel)]="ordemAplicada" value="alfabetica">
-            <label class="btn btn-outline-primary" for="alfabetica">Alfabética</label>
-            <input type="radio" class="btn-check" name="ordenacao" id="prazo" autocomplete="off" [(ngModel)]="ordemAplicada" value="prazo">
-            <label class="btn btn-outline-primary" for="prazo">Prazo</label>
+        <div class="row mb-4">
+          <!-- Filtros -->
+          <div class="col d-flex align-items-center">
+            <i class="bi bi-filter-circle-fill pe-3 ps-1 fs-5 text-primary"></i>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" id="todas" formControlName="concluida" [value]="undefined">
+              <label class="btn btn-outline-primary" for="todas">Todas</label>
+
+              <input type="radio" class="btn-check" id="pendentes" formControlName="concluida" [value]="false">
+              <label class="btn btn-outline-primary" for="pendentes">Pendentes</label>
+
+              <input type="radio" class="btn-check" id="concluidas" formControlName="concluida" [value]="true">
+              <label class="btn btn-outline-primary" for="concluidas">Concluídas</label>
+            </div>
+          </div>
+          <!-- Botão excluir concluídas -->
+          <div class="col-auto">
+            <button class="btn btn-danger" (click)="excluirConcluidas()">Excluir concluídas</button>
           </div>
         </div>
-      </div>
+
+        <div class="row mb-4">
+          <!-- Opções de ordenação -->
+          <div class="col d-flex align-items-center">
+            <i class="bi bi-sort-up pe-3 ps-1 fs-5 text-primary"></i>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" id="dataCriacao" formControlName="sort" value="dataCriacao">
+              <label class="btn btn-outline-primary" for="dataCriacao">Data de criação</label>
+
+              <input type="radio" class="btn-check" id="titulo" formControlName="sort" value="titulo">
+              <label class="btn btn-outline-primary" for="titulo">Alfabética</label>
+
+              <input type="radio" class="btn-check" id="prazo" formControlName="sort" value="prazo">
+              <label class="btn btn-outline-primary" for="prazo">Prazo</label>
+            </div>
+          </div>
+        </div>
+
+      </form>
 
       <ul class="list-group">
-        <app-tarefa-card *ngFor="let t of tarefas$ | async; index as i" [tarefa]="t"></app-tarefa-card>
+        <app-tarefa-card *ngFor="let t of tarefas$ | async; index as i" [tarefa]="t" (excluida)="onExcluida()" (concluida)="onConcluida()"></app-tarefa-card>
       </ul>
 
-      <div class="text-center mt-2" [class.text-success]="(totalTarefas$ | async) != 0 && (quantConcluidas$ | async) == (totalTarefas$ | async)">{{ quantConcluidas$ | async }}/{{ totalTarefas$ | async }} tarefa(s) concluída(s)</div>
+      <div class="text-center mt-2"
+        *ngIf="{ total: totalTarefas$ | async, concluidas: quantConcluidas$ | async } as dados"
+        [class.text-success]="dados.total !== 0 && dados.concluidas === dados.total">
+          {{ dados.concluidas }}/{{ dados.total }} tarefa(s) concluída(s)
+      </div>
 
       <div class="text-center mt-2">
-        Você está na página {{ pagina }}
+        Você está na página {{ (state$ | async)?.page }}
         <i class="bi bi-arrow-right-circle ms-1" (click)="proximaPagina()" style="cursor: pointer;"></i>
       </div>
     </div>

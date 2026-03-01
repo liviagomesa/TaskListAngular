@@ -2,17 +2,19 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, Form, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { map, Observable, Subscription, switchMap } from 'rxjs';
+import { BaseService } from '../base-service/base.service';
 
 @Component({
   selector: 'app-base-form',
   template: '<div></div>'
 })
-export abstract class BaseFormComponent<T extends { [key: string]: any }> implements OnInit, OnDestroy {
+export abstract class BaseFormComponent<T extends { id?: number | null }> implements OnInit, OnDestroy {
 
   form!: FormGroup;
   inscricao!: Subscription;
-  entity!: T; // vem do resolver
-  protected service!: any;
+  dto!: T; // vem do resolver
+  protected service!: BaseService<T>;
+  protected idRota!: number | null;
 
   get hasUnsavedChanges(): boolean {
     return this.form.dirty;
@@ -25,15 +27,17 @@ export abstract class BaseFormComponent<T extends { [key: string]: any }> implem
   ) { }
 
   ngOnInit(): void {
+    this.idRota = Number(this.activatedRoute.snapshot.paramMap.get('id'));
     this.criarFormControls();
-    this.setEntityAndFormValueFromRoute();
+    console.log(this.form);
+    this.setDtoAndFormValueFromRoute();
     /*this.form.valueChanges.subscribe((val) => {
       this.form.markAsDirty();
     });*/
   }
 
   ngOnDestroy(): void {
-    this.inscricao.unsubscribe();
+    this.inscricao?.unsubscribe(); // com operador elvis porque inscricao pode ser undefined (se metodo que subscreve nunca for executado)
   }
 
   /** Este método usa o FormBuilder para criar todos os controles de `form`
@@ -45,11 +49,14 @@ export abstract class BaseFormComponent<T extends { [key: string]: any }> implem
     console.log(this.form);
 
     if (this.form.valid) {
-      const idRota = this.activatedRoute.snapshot.paramMap.get('id');
-      this.service.save(this.form.value, idRota);
-      this.form.markAsPristine();
-      alert('Formulário enviado com sucesso!');
-      this.router.navigate(['../../'], { relativeTo: this.activatedRoute });
+      this.service.save(this.form.value, this.idRota).subscribe({
+        next: () => {
+          this.form.markAsPristine();
+          alert('Formulário enviado com sucesso!');
+          this.router.navigate(['../../'], { relativeTo: this.activatedRoute });
+        },
+        error: () => alert('Erro ao salvar')
+      });
     } else {
       this.markFormGroupAsTouched(this.form);
     }
@@ -96,20 +103,18 @@ export abstract class BaseFormComponent<T extends { [key: string]: any }> implem
    * já estão criados, porém com valores padrão
    * (ex.: '', false ou [] no caso de FormArray).
    */
-  setEntityAndFormValueFromRoute(): void {
-    // activatedRoute.data sempre emite quando a rota é aberta, em qualquer rota! mas não necessariamente existe o campo t
-    this.inscricao = this.activatedRoute.data.pipe(
-      switchMap((objetoEmitidoRota: any) => objetoEmitidoRota['entity'] as Observable<T | undefined>)
-    ).subscribe(
-      (entity) => {
-        this.entity = entity ?? this.service.newEntity();
-        // patchValue preenche apenas os controles que já existem
-        // (os controles dos FormArray não existem ainda neste ponto)
-        this.form.patchValue(this.entity);
-        // neste método, criamos os controles dos FormArrays de form
-        this.criarEPreencherFormArraysControls();
-      }
-    )
+  setDtoAndFormValueFromRoute(): void {
+    // activatedRoute.data sempre emite quando a rota é aberta, em qualquer rota!
+    // mas não necessariamente existe o campo dto (caso de rota /new)
+    this.inscricao = this.activatedRoute.data.subscribe((objetoEmitidoRota: any) => {
+      const dto = objetoEmitidoRota['dto'] as T | undefined;
+      this.dto = dto ?? this.service.createEmpty();
+      // patchValue preenche apenas os controles que já existem
+      // (os controles dos FormArray não existem ainda neste ponto)
+      this.form.patchValue(this.dto);
+      // neste método, criamos os controles dos FormArrays de form
+      this.criarEPreencherFormArraysControls();
+    })
   }
 
   /**

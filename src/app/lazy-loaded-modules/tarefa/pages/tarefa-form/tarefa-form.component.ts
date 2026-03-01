@@ -1,7 +1,7 @@
 import { CustomSyncValidators } from './../../../../provided-in-root/custom-sync-validators';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ImportanciaTarefa } from '../../enums/importancia-tarefa.enum';
-import { Subtarefa, Tarefa } from '../../tarefa.model';
+import { Subtarefa, Tag, Tarefa } from '../../tarefa.model';
 import { TarefaService } from '../../tarefa.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseFormComponent } from 'src/app/shared/base-form/base-form.component';
@@ -68,8 +68,8 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
   }
 
   override criarEPreencherFormArraysControls(): void {
-    if (this.entity.tags) this.criarEPreencherTagsControls(this.entity.tags);
-    if (this.entity.subtarefas) this.criarEPreencherSubtarefasControls(this.entity.subtarefas);
+    if (this.dto.tags) this.criarEPreencherTagsControls(this.dto.tags);
+    if (this.dto.subtarefas) this.criarEPreencherSubtarefasControls(this.dto.subtarefas);
   }
 
   // ---------------------------------------------------------------------
@@ -79,12 +79,29 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
   // SUBSEÇÃO: ARRAY DE TAGS
   // ------------------------------
 
-  addTag(): void {
-    let valorInput: string = this.form.get('newTag')?.value;
-    valorInput = valorInput.trim();
-    if (!valorInput) return;
-    this.tagsFormArray.push(this.fb.control(valorInput, [Validators.maxLength(30), Validators.pattern(/^[\w\s-]+$/)]));
-    this.form.get('newTag')?.setValue('');
+  addTag(tag?: Tag): void {
+    if (!this.idRota) {
+      alert('Crie a tarefa antes de adicionar tags.');
+      return;
+    }
+    // se não vier o parâmetro tag, disparou do template (usuário clicou em nova tag)
+    // se vier, disparou da inicialização do formulário (populando campos com dto vindo do resolver)
+    if (!tag) {
+      let valorInput: string = this.form.get('newTag')?.value;
+      valorInput = valorInput.trim();
+      if (!valorInput) return;
+      tag = {
+        id: null,
+        tarefaId: this.idRota,
+        nome: valorInput
+      }
+      this.form.get('newTag')?.setValue('');
+    }
+    this.tagsFormArray.push(this.fb.group({
+      id: [tag?.id],
+      tarefaId: [tag?.tarefaId],
+      nome: [tag?.nome || '', [Validators.maxLength(30), Validators.pattern(/^[\w\s-]+$/)]]
+    }));
   }
 
   removeTag(index: number): void {
@@ -95,9 +112,9 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
     return this.tagsFormArray?.controls ?? [];
   }
 
-  criarEPreencherTagsControls(tags: String[]) {
+  criarEPreencherTagsControls(tags: Tag[]) {
     tags.forEach(tag => {
-      this.tagsFormArray.push(new FormControl(tag));
+      this.addTag(tag);
     });
   }
 
@@ -105,8 +122,13 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
   // ------------------------------
 
   addSubtarefa(subtarefa?: Subtarefa): void {
+    if (!this.idRota) {
+      alert('Crie a tarefa antes de adicionar subtarefas.');
+      return;
+    }
     this.subtarefasFormArray.push(this.fb.group({
       id: [subtarefa?.id || ''],
+      tarefaId: [this.idRota],
       titulo: [subtarefa?.titulo || '', [Validators.required, Validators.minLength(3)]],
       prazo: [subtarefa?.prazo || '', Validators.required],
       concluida: [subtarefa?.concluida || false],

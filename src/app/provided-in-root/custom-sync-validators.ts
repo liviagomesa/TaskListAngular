@@ -1,4 +1,5 @@
 import { AbstractControl, FormArray, ValidatorFn } from "@angular/forms";
+import { Tag } from "../lazy-loaded-modules/tarefa/tarefa.model";
 
 export class CustomSyncValidators {
 
@@ -15,7 +16,7 @@ export class CustomSyncValidators {
 
   static noDuplicateTags(): ValidatorFn {
     return (control: AbstractControl) => {
-      const values = (control as FormArray).value.map((v: string) => v.toLowerCase());
+      const values = (control as FormArray).value.map((v: Tag) => v.nome.toLowerCase());
       const hasDuplicates = new Set(values).size !== values.length;
       return hasDuplicates ? { duplicateTags: true } : null;
     };

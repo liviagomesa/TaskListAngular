@@ -40,10 +40,14 @@
           <div class="campo-invalido form-text" *ngIf="form.get('tags')?.errors?.['duplicateTags']">Tags duplicadas não são permitidas</div>
           <div class="campo-invalido form-text" *ngIf="form.get('tags')?.errors?.['maxTags']">Excedido número máximo permitido de tags</div>
           <!-- Renderização das tags -->
-          <span class="badge text-bg-info me-3 mt-3" *ngFor="let tagControl of getTagsControls(); let i = index">
-            {{ tagControl.value }}
-            <i class="bi bi-x-lg action text-danger" (click)="removeTag(i)"></i>
-          </span>
+          <div formArrayName="tags">
+            <ng-container *ngFor="let tagControl of getTagsControls(); let i = index" [formGroupName]="i">
+              <span class="badge text-bg-info me-3 mt-3">
+                {{ tagControl.value.nome }}
+                <i class="bi bi-x-lg action text-danger" (click)="removeTag(i)"></i>
+              </span>
+            </ng-container>
+          </div>
         </div>
 
       </div>

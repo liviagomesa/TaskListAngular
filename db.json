@@ -1,0 +1,90 @@
+{
+  "tarefas": [
+    {
+      "id": 2,
+      "titulo": "Ir ao médico",
+      "anotacoes": "Endocrinologista ou clínico geral, o que conseguir horário primeiro.",
+      "prazo": "2025-11-13",
+      "importancia": 1,
+      "concluida": true,
+      "subtarefas": [],
+      "newTag": "",
+      "tags": [
+        {
+          "id": 3,
+          "tarefaId": 2,
+          "nome": "Tag1"
+        },
+        {
+          "id": 4,
+          "tarefaId": 2,
+          "nome": "Tag2"
+        },
+        {
+          "id": 5,
+          "tarefaId": 2,
+          "nome": "Tag3"
+        },
+        {
+          "id": null,
+          "tarefaId": null,
+          "nome": "teste"
+        }
+      ],
+      "dataCriacao": "2025-10-02"
+    },
+    {
+      "id": 1,
+      "titulo": "Limpar quintal",
+      "anotacoes": "A limpeza será feita antes de qualquer coisa pra garantir que a sujeira não se espalhe pela casa.",
+      "prazo": "2025-11-20",
+      "importancia": 3,
+      "concluida": false,
+      "subtarefas": [
+        {
+          "id": "",
+          "tarefaId": 1,
+          "titulo": "Teste",
+          "prazo": "2026-03-01",
+          "concluida": true,
+          "dataCriacao": "2026-03-01T22:48:21.467Z"
+        }
+      ],
+      "newTag": "",
+      "tags": [],
+      "dataCriacao": "2025-10-01"
+    }
+  ],
+  "subtarefas": [
+    {
+      "tarefaId": 1,
+      "titulo": "Teste",
+      "prazo": "2026-03-01",
+      "concluida": true,
+      "dataCriacao": "2026-03-01T22:48:21.467Z",
+      "id": 1
+    }
+  ],
+  "tags": [
+    {
+      "tarefaId": 2,
+      "nome": "Tag1",
+      "id": 1
+    },
+    {
+      "tarefaId": 2,
+      "nome": "Tag2",
+      "id": 2
+    },
+    {
+      "tarefaId": 2,
+      "nome": "Tag3",
+      "id": 3
+    },
+    {
+      "tarefaId": 2,
+      "nome": "teste",
+      "id": 4
+    }
+  ]
+}

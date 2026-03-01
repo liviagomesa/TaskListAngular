@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private authService: SecurityService) {}
 
   ngOnDestroy(): void {
-    this.inscricao.unsubscribe();
+    this.inscricao?.unsubscribe();
   }
 
 }

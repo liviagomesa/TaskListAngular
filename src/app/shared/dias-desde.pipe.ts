@@ -5,11 +5,21 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DiasDesdePipe implements PipeTransform {
 
-  transform(data: Date): number {
+  transform(data: string | Date | null | undefined): number | null {
+
+    if (!data) return null;
+
+    const dateObj = typeof data === 'string'
+      ? new Date(data)
+      : data;
+
+    if (isNaN(dateObj.getTime())) return null;
+
     const hoje = new Date();
-    const diferencaMilissegundos = hoje.getTime() - data.getTime();
-    const diferencaDias = Math.floor(diferencaMilissegundos / (1000 * 60 * 60 * 24));
-    return diferencaDias;
+
+    const diffMs = hoje.getTime() - dateObj.getTime();
+
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
   }
 
 }

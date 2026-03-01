@@ -1,6 +1,6 @@
 <div class="modal-sheet bg-body-secondary d-flex align-items-center justify-content-center py-3 py-md-4 py-lg-5">
   <div class="modal-dialog">
-    <div class="modal-content rounded-4 shadow card">
+    <div class="modal-content rounded-4 shadow card" *ngIf="tarefa">
       <div class="modal-header p-5 pb-4 border-bottom-0 justify-content-between">
         <h1 class="fw-bold mb-0 fs-2">{{ tarefa.titulo }}</h1>
         <div class="lead">#{{ tarefa.id }}</div>
@@ -44,7 +44,7 @@
 
           <button class="btn btn-outline-primary" [routerLink]="['/tarefas', tarefa.id, 'edit']">✏️ Editar</button>
 
-          <button class="btn" [ngClass]="tarefa.concluida ? 'btn-danger' : 'btn-success'" (click)="toggleConclusao()">
+          <button class="btn" [ngClass]="tarefa.concluida ? 'btn-danger' : 'btn-success'" (click)="toggleConclusao(tarefa)">
             {{ tarefa.concluida ? "Reabrir" : "✅ Concluir" }}
           </button>
 

@@ -1,21 +1,18 @@
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { FiltroTarefas } from './enums/filtro-tarefas.enum';
-import { ImportanciaTarefa } from './enums/importancia-tarefa.enum';
 import { Tarefa } from './tarefa.model';
-import { map, Observable, Subscription } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { filter, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { BaseService } from 'src/app/shared/base-service/base.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TarefaService {
+export class TarefaService extends BaseService<Tarefa> {
 
-  inscricao!: Subscription;
+  endpoint = 'tarefas';
 
-  constructor(private activatedRoute: ActivatedRoute, private httpClient: HttpClient) { }
-
-  newEntity(): Tarefa {
+  createEmpty(): Tarefa {
     return {
       id: null,
       titulo: '',
@@ -29,70 +26,96 @@ export class TarefaService {
     };
   }
 
-  getTarefas(filtro?: FiltroTarefas, ordem?: string): Observable<Tarefa[]> {
-    return this.httpClient.get<Tarefa[]>('assets/tarefas.json').pipe(
-      map((response: Tarefa[]) => {
-        if (ordem) this.ordenar(response, ordem);
-        if (filtro) response = this.filtrar(response, filtro);
-        return response;
+  override create(tarefa: Tarefa): Observable<Tarefa> {
+    // Primeiro criamos a tarefa
+    return this.httpClient.post<Tarefa>(this.baseUrl, tarefa).pipe(
+
+      // Depois criamos as subtarefas e tags
+      switchMap((t: Tarefa) => {
+
+        // Array onde vamos guardar o valor emitido por cada post
+        const ops: Observable<any>[] = [];
+
+        // Para cada tag do formulário, cria um POST novo
+        (tarefa.tags ?? []).forEach(tag => {
+          ops.push(
+            this.httpClient.post(`${environment.apiUrl}/tags`, { ...tag, id: undefined, tarefaId: t.id })
+          );
+        });
+
+        // Para cada subtarefa do formulário, cria um POST novo
+        (tarefa.subtarefas ?? []).forEach(sub => {
+          ops.push(
+            this.httpClient.post(`${environment.apiUrl}/subtarefas`, { ...sub, id: undefined, tarefaId: t.id })
+          );
+        });
+
+        // Se não tiver filhos, já retorna a tarefa
+        if (ops.length === 0) return of(t);
+
+        // Se tiver algo para criar, forkJoin espera TODOS os POSTs terminarem e emite um array com todas as tags e subtarefas criadas
+        return forkJoin(ops).pipe(
+          map(() => t) // em vez de retornar o array, retorna a tarefa
+        );
+
       })
     );
   }
 
-  filtrar(tarefas: Tarefa[], filtro: FiltroTarefas): Tarefa[] {
-    switch (filtro) {
-      case FiltroTarefas.Todas:
-        return tarefas;
-      case FiltroTarefas.Pendentes:
-        return tarefas.filter(t => t.concluida == false);
-      case FiltroTarefas.Concluidas:
-        return tarefas.filter(t => t.concluida == true);
-      default:
-        return tarefas;
-    }
+  override update(tarefa: Tarefa, id: number): Observable<Tarefa> {
+
+    // como estamos usando json-server, é necessário excluir tudo e recriar depois
+    return this.deleteById(id).pipe(
+      switchMap(() => this.create(tarefa))
+    );
+
   }
 
-  ordenar(tarefas: Tarefa[], ordem: string): void {
-    switch (ordem) {
-      case 'alfabetica':
-        tarefas.sort((a, b) => a.titulo.localeCompare(b.titulo));
-        return;
-      case 'dataDeCriacao':
-        /* <0 → dataA vem antes de dataB
-        0 → iguais
-        >0 → dataA vem depois de dataB */
-        tarefas.sort((a, b) => a.dataCriacao.getTime() - b.dataCriacao.getTime());
-        return;
-      case 'prazo':
-        tarefas.sort((a, b) => {
-          if (!a.prazo && !b.prazo) return 0;
-          if (!a.prazo) return 1;
-          if (!b.prazo) return -1;
-          return a.prazo.getTime() - b.prazo.getTime();
-        });
-        return;
-      default:
-        return;
-    }
+  override deleteById(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`${this.baseUrl}/${id}?_dependent=subtarefas,tags`);
   }
 
-  save(tarefa: Tarefa, id: number | null): void {
-    if (id) this.httpClient.put(`https://jsonplaceholder.typicode.com/posts/${id}`, tarefa).subscribe((answ: any) => console.log(answ));
-    else this.httpClient.post(`https://jsonplaceholder.typicode.com/posts`, tarefa).subscribe((answ: any) => console.log(answ));
+  excluirConcluidas(): Observable<void[] | null> {
+    return this.findConcluidas().pipe(
+      switchMap(tarefas => {
+        // Se não houver tarefas, retorne um Observable de 'null' imediatamente
+        if (tarefas.length === 0) return of(null);
+
+        return forkJoin( // 3. encapsula todos os observables, espera TODOS terminarem e emite UM array com todos os resultados
+          tarefas.map(t => // 1. para cada tarefa concluída
+            this.deleteById(t.id!)) // 2. exclui e emite Observable<void> (se está no banco, com certeza tem id)
+        )
+      })
+    );
   }
 
-  deleteById(id: number): void {
-    this.httpClient.delete(`https://jsonplaceholder.typicode.com/posts/${id}`).subscribe((answ: any) => console.log(answ));
+  findByIdWithEmbed(id: number): Observable<Tarefa> {
+    return this.httpClient.get<Tarefa>(`${this.baseUrl}/${id}?_embed=subtarefas&_embed=tags`);
   }
 
-  excluirConcluidas(): void {
-    this.httpClient.delete(`https://jsonplaceholder.typicode.com/posts/concluidas`).subscribe((answ: any) => console.log(answ));
+  toggleConclusaoById(id: number): Observable<Tarefa> {
+    return this.findById(id).pipe(
+      filter(obj => this.isDto(obj)), // garante que não prossiga se for undefined
+      map((t: Tarefa) => { return { ...t, concluida: !t.concluida } }),
+      switchMap(t => this.update(t, id))
+    );
   }
 
-  getById(id: number): Observable<Tarefa | undefined> {
-    // TODO: Backend retorna a tarefa diretamente
-    return this.httpClient.get<Tarefa[]>('assets/tarefas.json').pipe(
-      map(tarefas => tarefas.find(t => t.id === id))
+  findConcluidas(): Observable<Tarefa[]> {
+    return this.httpClient.get<Tarefa[]>(`${this.baseUrl}?concluida=true`);
+  }
+
+  countConcluidas(): Observable<number> {
+    const params = new HttpParams()
+    .set('concluida', true)
+    .set('_per_page', '1').set('_page', 1);      // O header X-Total-Count só é enviado pelo json-server quando você usa os parâmetros de paginação
+
+    return this.httpClient.get<Tarefa[]>(this.baseUrl, {
+        params,
+        observe: 'response'
+      }
+    ).pipe(
+      map(resp => Number(resp.headers.get('X-Total-Count')) || 0)
     );
   }
 

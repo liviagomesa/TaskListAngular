@@ -1,9 +1,10 @@
+import { ParamsBusca } from '../../../../provided-in-root/params-busca.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FiltroTarefas } from '../../enums/filtro-tarefas.enum';
 import { Tarefa } from '../../tarefa.model';
 import { TarefaService } from '../../tarefa.service';
-import { map, Observable, Subscription } from 'rxjs';
+import { map, Observable, shareReplay, Subscription, switchMap, tap } from 'rxjs';
+import { FormBuilder, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-lista-tarefas',
@@ -12,51 +13,135 @@ import { map, Observable, Subscription } from 'rxjs';
 })
 export class ListaTarefasComponent implements OnInit, OnDestroy {
 
-  filtroAplicado: FiltroTarefas = FiltroTarefas.Todas; // "Todas" ou "Pendentes" ou "Concluídas"
-  filtros = Object.values(FiltroTarefas); // [ "Todas", "Pendentes", "Concluídas" ]
-  ordemAplicada: string = '';
-  pagina!: number;
+  state$ = this.activatedRoute.queryParams.pipe(
+
+    map(qp => {
+      let params: ParamsBusca = {
+        page: Number(qp['page'] ?? 1)
+      };
+      if (qp['sort'] != undefined) {
+        params = {
+          ...params,
+          sort: qp['sort']
+        }
+      }
+      if (qp['concluida'] != undefined) {
+        params = {
+          ...params,
+          filters: [{
+            propriedade: "concluida",
+            condicao: "equals",
+            valor: qp['concluida']
+          }]
+        }
+      }
+      return params;
+    }),
+
+    shareReplay(1)
+  );
+
+  currentState!: ParamsBusca;
+
   inscricao!: Subscription;
-  // valores serão atribuidos no ngOnInit
   tarefas$!: Observable<Tarefa[]>;
-  totalTarefas$!: Observable<number>;
-  quantConcluidas$!: Observable<number>;
+  totalTarefas$!: Observable<Number>;
+  quantConcluidas$!: Observable<Number>;
+  filterSortForm = this.fb.group({
+    concluida: new FormControl<boolean | undefined>(undefined),
+    sort: new FormControl<string | null>(null)
+  });
 
-  constructor(private tarefaService: TarefaService, private activatedRoute: ActivatedRoute, private router: Router) {
-  }
-
-  ngOnDestroy(): void {
-    this.inscricao.unsubscribe();
+  constructor(private tarefaService: TarefaService, private activatedRoute: ActivatedRoute, private router: Router, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
-    // inicializando observables
-    this.tarefas$ = this.tarefaService.getTarefas(this.filtroAplicado, this.ordemAplicada);
-    this.totalTarefas$ = this.tarefas$.pipe(
-      map((response: Tarefa[]) => response.length)
-    );
-    this.quantConcluidas$ = this.tarefas$.pipe(
-      map((response: Tarefa[]) => response.filter(t => t.concluida).length)
-    );
+    this.carregarContagemTarefas();
 
-    this.inscricao = this.activatedRoute.queryParams.subscribe((params: any) => {
-      const parametroPagina: number = params['pagina'];
-      if (!parametroPagina) {
-        this.pagina = 1;
-        this.router.navigate(['/tarefas'], { queryParams: { 'pagina': this.pagina } });
-      } else {
-        this.pagina = parametroPagina;
+    // assinamos o state logo no início para atualizar a propriedade currentState sempre que emitir
+    this.state$.subscribe(s => {
+      this.currentState = s;
+      this.carregarTarefas();
+
+      let qpConcluida = s.filters?.find(f => f.propriedade == 'concluida')?.valor as string;
+      let concluidaAsBoolean = this.concluidaAsBoolean(qpConcluida);
+
+      this.filterSortForm.patchValue({
+        sort: s.sort,
+        concluida: concluidaAsBoolean
+      }, { emitEvent: false });
+    });
+    // assinamos os query params da rota logo no início para recarregar tarefas sempre que emitir (inclusive no primeiro carregamento)
+    //this.activatedRoute.queryParams.subscribe(() => this.carregarTarefas());
+
+    this.filterSortForm.valueChanges.subscribe(() => this.atualizarfilterSort());
+  }
+
+  ngOnDestroy(): void {
+    this.inscricao?.unsubscribe();
+  }
+
+  private concluidaAsBoolean(qpConcluida: string) {
+    switch (qpConcluida) {
+      case 'true': return true;
+      case 'false': return false;
+      default: return undefined;
+    }
+  }
+
+  private carregarTarefas() {
+    this.tarefas$ = this.tarefaService.findAll(this.currentState);
+  }
+
+  private carregarContagemTarefas() {
+    this.totalTarefas$ = this.tarefaService.countAll();
+    this.quantConcluidas$ = this.tarefaService.countConcluidas();
+  }
+
+  protected excluirConcluidas(): void {
+    this.tarefaService.excluirConcluidas().subscribe({
+      next: (resultado) => {
+        if (resultado === null) {
+          alert('Não há tarefas concluídas para excluir!');
+          return;
+        }
+        this.carregarTarefas();
+        this.carregarContagemTarefas();
+        alert('Tarefas excluídas com sucesso!');
+      },
+      error: (err) => alert('Erro ao excluir')
+    });
+  }
+
+  proximaPagina() {
+    this.router.navigate([], {
+      queryParamsHandling: 'merge',
+      queryParams: {
+        page: Number(this.activatedRoute.snapshot.queryParamMap.get('page') ?? 1) + 1
       }
     });
   }
 
-  protected excluirConcluidas(): void {
-    this.tarefaService.excluirConcluidas();
+  atualizarfilterSort() {
+    this.router.navigate([], {
+      queryParamsHandling: 'merge',
+      queryParams: {
+        concluida: this.filterSortForm.get('concluida')?.value, // Se for undefined, o Angular remove o param
+        sort: this.filterSortForm.get('sort')?.value,
+        page: 1
+      }
+    });
   }
 
-  protected proximaPagina() {
-    this.pagina++;
-    this.router.navigate(['/tarefas'], { queryParams: { 'pagina': this.pagina } });
+  onExcluida() {
+    this.carregarTarefas();
+    this.carregarContagemTarefas();
   }
+
+  onConcluida() {
+    this.carregarTarefas();
+    this.carregarContagemTarefas();
+  }
+
 
 }

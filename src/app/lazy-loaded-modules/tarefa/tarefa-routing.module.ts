@@ -9,8 +9,8 @@ import { FormGuard } from 'src/app/provided-in-root/security-and-guards/form.gua
 const routes: Routes = [
   { path: '', component: ListaTarefasComponent },
   { path: 'new', component: TarefaFormComponent, canDeactivate: [FormGuard] },
-  { path: ':id', component: TarefaDetailsComponent, resolve: { entity: TarefaResolver } },
-  { path: ':id/edit', component: TarefaFormComponent, resolve: { entity: TarefaResolver }, canDeactivate: [FormGuard] },
+  { path: ':id', component: TarefaDetailsComponent, resolve: { dto: TarefaResolver } },
+  { path: ':id/edit', component: TarefaFormComponent, resolve: { dto: TarefaResolver }, canDeactivate: [FormGuard] },
 ];
 
 @NgModule({
