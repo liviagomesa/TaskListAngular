@@ -46,20 +46,50 @@
 
       </form>
 
-      <ul class="list-group">
-        <app-tarefa-card *ngFor="let t of tarefas$ | async; index as i" [tarefa]="t" (excluida)="onExcluida()" (concluida)="onConcluida()"></app-tarefa-card>
-      </ul>
+      <ng-container *ngIf="appState$ | async as state">
 
-      <div class="text-center mt-2"
-        *ngIf="{ total: totalTarefas$ | async, concluidas: quantConcluidas$ | async } as dados"
-        [class.text-success]="dados.total !== 0 && dados.concluidas === dados.total">
-          {{ dados.concluidas }}/{{ dados.total }} tarefa(s) concluída(s)
-      </div>
+        <div *ngIf="state.loading">
+          ⏳ Carregando tarefas...
+        </div>
 
-      <div class="text-center mt-2">
-        Você está na página {{ (state$ | async)?.page }}
-        <i class="bi bi-arrow-right-circle ms-1" (click)="proximaPagina()" style="cursor: pointer;"></i>
-      </div>
+        <div *ngIf="state.error && !state.loading">
+          ⚠️ Erro: Não foi possível conectar ao servidor.
+          <button class="btn btn-danger" (click)="carregarDados()">Tentar novamente</button>
+        </div>
+
+        <ng-container *ngIf="!state.loading && !state.error">
+          <ul class="list-group" *ngIf="state.dados.length > 0; else empty">
+            <app-tarefa-card
+              *ngFor="let t of state.dados"
+              [tarefa]="t"
+              (excluida)="onExcluida()"
+              (concluida)="onConcluida()">
+            </app-tarefa-card>
+          </ul>
+        </ng-container>
+
+        <ng-template #empty>
+          <div *ngIf="!state.loading && !state.error">
+            📭 Nenhuma tarefa encontrada.
+          </div>
+        </ng-template>
+
+        <!-- Cada async pipe inserido no html gera um subscribe/unsubscribe individual
+        (ou seja, cada vez que aparece no template, será uma execução do método do http)
+        Usamos "as dados" para conseguir chamar async pipe uma única vez e depois só referenciar a variável "dados". -->
+        <div class="text-center mt-2"
+            *ngIf="!state.loading && !state.error"
+            [class.text-success]="state.total !== 0 && state.concluidas === state.total">
+            {{ state.concluidas }}/{{ state.total }} tarefa(s) concluída(s)
+        </div>
+
+        <div class="text-center mt-2">
+          Você está na página {{ (state$ | async)?.page }}
+          <i class="bi bi-arrow-right-circle ms-1" (click)="proximaPagina()" style="cursor: pointer;"></i>
+        </div>
+
+      </ng-container>
+
     </div>
   </div>
 </div>

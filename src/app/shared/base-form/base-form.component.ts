@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, Form, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { map, Observable, Subscription, switchMap } from 'rxjs';
+import { map, Observable, Subject, Subscription, switchMap, takeUntil } from 'rxjs';
 import { BaseService } from '../base-service/base.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { BaseService } from '../base-service/base.service';
 export abstract class BaseFormComponent<T extends { id?: number | null }> implements OnInit, OnDestroy {
 
   form!: FormGroup;
-  inscricao!: Subscription;
+  destroy$ = new Subject<void>;
   dto!: T; // vem do resolver
   protected service!: BaseService<T>;
   protected idRota!: number | null;
@@ -37,7 +37,9 @@ export abstract class BaseFormComponent<T extends { id?: number | null }> implem
   }
 
   ngOnDestroy(): void {
-    this.inscricao?.unsubscribe(); // com operador elvis porque inscricao pode ser undefined (se metodo que subscreve nunca for executado)
+    //this.inscricao?.unsubscribe(); // com operador elvis porque inscricao pode ser undefined (se metodo que subscreve nunca for executado)
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /** Este método usa o FormBuilder para criar todos os controles de `form`
@@ -106,7 +108,9 @@ export abstract class BaseFormComponent<T extends { id?: number | null }> implem
   setDtoAndFormValueFromRoute(): void {
     // activatedRoute.data sempre emite quando a rota é aberta, em qualquer rota!
     // mas não necessariamente existe o campo dto (caso de rota /new)
-    this.inscricao = this.activatedRoute.data.subscribe((objetoEmitidoRota: any) => {
+    this.activatedRoute.data.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((objetoEmitidoRota: any) => {
       const dto = objetoEmitidoRota['dto'] as T | undefined;
       this.dto = dto ?? this.service.createEmpty();
       // patchValue preenche apenas os controles que já existem

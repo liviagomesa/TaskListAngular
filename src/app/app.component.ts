@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { SecurityService } from './provided-in-root/security-and-guards/security.service';
 
 @Component({
@@ -9,10 +9,12 @@ import { SecurityService } from './provided-in-root/security-and-guards/security
 })
 export class AppComponent implements OnInit, OnDestroy {
   protected usuarioLogado: boolean = false;
-  private inscricao!: Subscription;
+  private destroy$ = new Subject<void>;
 
   ngOnInit(): void {
-    this.inscricao = this.authService.logadoEmitter.subscribe((logado: boolean) => {
+    this.authService.logadoEmitter.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((logado: boolean) => {
       if (logado) this.usuarioLogado = true;
       else this.usuarioLogado = false;
     })
@@ -21,7 +23,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private authService: SecurityService) {}
 
   ngOnDestroy(): void {
-    this.inscricao?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { delay, map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Filtro, ParamsBusca } from 'src/app/provided-in-root/params-busca.model';
 import { environment } from 'src/environments/environment';
@@ -43,7 +43,7 @@ export abstract class BaseService<E extends { id?: number | null }> {
       }
     }
 
-    return this.httpClient.get<E[]>(this.baseUrl, { params });
+    return this.httpClient.get<E[]>(this.baseUrl, { params }).pipe(delay(2000));
   }
 
   save(dto: E, id: number | null): Observable<E> {
