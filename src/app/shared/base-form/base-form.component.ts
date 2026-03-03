@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, Form, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { map, Observable, Subject, Subscription, switchMap, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { BaseService } from '../base-service/base.service';
 
 @Component({
@@ -46,6 +46,11 @@ export abstract class BaseFormComponent<T extends { id?: number | null }> implem
    * com valores padrão (ex.: '', false ou [] no caso de FormArray).
    */
   abstract criarFormControls(): void;
+
+  /**
+   * Retornar nesta função o método estático de construção da entidade vazia, que por padrão fica no arquivo de model da entidade.
+   */
+  protected abstract createEmpty(): T;
 
   onSubmit() {
     console.log(this.form);
@@ -112,7 +117,7 @@ export abstract class BaseFormComponent<T extends { id?: number | null }> implem
       takeUntil(this.destroy$)
     ).subscribe((objetoEmitidoRota: any) => {
       const dto = objetoEmitidoRota['dto'] as T | undefined;
-      this.dto = dto ?? this.service.createEmpty();
+      this.dto = dto ?? this.createEmpty();
       // patchValue preenche apenas os controles que já existem
       // (os controles dos FormArray não existem ainda neste ponto)
       this.form.patchValue(this.dto);

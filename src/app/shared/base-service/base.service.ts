@@ -17,8 +17,6 @@ export abstract class BaseService<E extends { id?: number | null }> {
 
   constructor(protected httpClient: HttpClient) { }
 
-  abstract createEmpty(): E;
-
   findAll(options?: ParamsBusca): Observable<E[]> {
     let params = new HttpParams();
 

@@ -12,20 +12,6 @@ export class TarefaService extends BaseService<Tarefa> {
 
   endpoint = 'tarefas';
 
-  createEmpty(): Tarefa {
-    return {
-      id: null,
-      titulo: '',
-      anotacoes: null,
-      concluida: false,
-      dataCriacao: new Date(),
-      prazo: null,
-      importancia: null,
-      subtarefas: null,
-      tags: null
-    };
-  }
-
   override create(tarefa: Tarefa): Observable<Tarefa> {
     // Primeiro criamos a tarefa
     return this.httpClient.post<Tarefa>(this.baseUrl, tarefa).pipe(

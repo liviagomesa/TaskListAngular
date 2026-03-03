@@ -26,3 +26,17 @@ export interface Tag {
   tarefaId: number | null,
   nome: string
 }
+
+export function createEmptyTarefa(): Tarefa {
+  return {
+    id: null,
+    titulo: '',
+    anotacoes: null,
+    concluida: false,
+    dataCriacao: new Date(),
+    prazo: null,
+    importancia: null,
+    subtarefas: null,
+    tags: null
+  };
+}

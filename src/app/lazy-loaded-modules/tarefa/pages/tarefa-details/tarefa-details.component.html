@@ -1,55 +1,64 @@
 <div class="modal-sheet bg-body-secondary d-flex align-items-center justify-content-center py-3 py-md-4 py-lg-5">
   <div class="modal-dialog">
-    <div class="modal-content rounded-4 shadow card" *ngIf="tarefa">
-      <div class="modal-header p-5 pb-4 border-bottom-0 justify-content-between">
-        <h1 class="fw-bold mb-0 fs-2">{{ tarefa.titulo }}</h1>
-        <div class="lead">#{{ tarefa.id }}</div>
-      </div>
-      <div class="modal-body p-5 pt-0">
+    <div class="modal-content rounded-4 shadow card" *ngIf="state$ | async as state">
 
-        <div class="text-center mb-4">
-          <span *ngIf="tarefa.importancia" class="badge rounded-pill bg-primary me-2">Importância {{ tarefa.importancia | importanciaTarefa }}</span>
-          <span class="badge rounded-pill" [ngClass]="tarefa.concluida ? 'bg-success' : 'bg-warning'">
-            {{ tarefa.concluida ? 'Concluída' : 'Em andamento' }}
-          </span>
+      <ng-container *ngIf="state.dto as tarefa">
+        <div class="modal-header p-5 pb-4 border-bottom-0 justify-content-between">
+          <h1 class="fw-bold mb-0 fs-2">{{ tarefa.titulo }}</h1>
+          <div class="lead">#{{ tarefa.id }}</div>
         </div>
+        <div class="modal-body p-5 pt-0">
 
-        <div class="mb-3">
-          <strong>📅 Prazo: </strong>
-          <span>{{ tarefa.prazo ? (tarefa.prazo | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
+          <div class="text-center mb-4">
+            <span *ngIf="tarefa.importancia" class="badge rounded-pill bg-primary me-2">Importância {{ tarefa.importancia | importanciaTarefa }}</span>
+            <span class="badge rounded-pill" [ngClass]="tarefa.concluida ? 'bg-success' : 'bg-warning'">
+              {{ tarefa.concluida ? 'Concluída' : 'Em andamento' }}
+            </span>
+          </div>
+
+          <div class="mb-3">
+            <strong>📅 Prazo: </strong>
+            <span>{{ tarefa.prazo ? (tarefa.prazo | date:'dd/MM/yyyy') : 'Sem prazo' }}</span>
+          </div>
+
+          <div class="mb-3">
+            <strong>🕒 Criada em: </strong>
+            <span>{{ tarefa.dataCriacao | date:'dd/MM/yyyy' }}</span>
+          </div>
+
+          <!--div class="mb-3">
+            <strong>👤 Responsável: </strong>
+            <span>{{ tarefa.responsavel || 'Você' }}</span>
+          </div>
+
+          <div class="mb-4">
+            <strong>📝 Descrição:</strong>
+            <p class="mt-1 text-muted" [ngClass]="{'fst-italic': !tarefa.descricao}">
+              {{ tarefa.descricao || 'Sem descrição.' }}
+            </p>
+          </div-->
+
+          <hr>
+
+          <div class="d-flex justify-content-center gap-3 mt-4">
+
+            <button class="btn btn-outline-secondary" routerLink="/tarefas">← Voltar</button>
+
+            <button class="btn btn-outline-primary" [routerLink]="['/tarefas', tarefa.id, 'edit']">✏️ Editar</button>
+
+            <button class="btn" [ngClass]="tarefa.concluida ? 'btn-danger' : 'btn-success'" (click)="toggleConclusao()">
+              {{ tarefa.concluida ? "Reabrir" : "✅ Concluir" }}
+            </button>
+
+            <div *ngIf="state.salvandoConclusao">⏳ Salvando...</div>
+            <div *ngIf="state.errorSalvar && !state.salvandoConclusao">
+              ⚠️ Erro: Não foi possível conectar ao servidor para salvar. Tente novamente.
+            </div>
+
+          </div>
         </div>
+      </ng-container>
 
-        <div class="mb-3">
-          <strong>🕒 Criada em: </strong>
-          <span>{{ tarefa.dataCriacao | date:'dd/MM/yyyy' }}</span>
-        </div>
-
-        <!--div class="mb-3">
-          <strong>👤 Responsável: </strong>
-          <span>{{ tarefa.responsavel || 'Você' }}</span>
-        </div>
-
-        <div class="mb-4">
-          <strong>📝 Descrição:</strong>
-          <p class="mt-1 text-muted" [ngClass]="{'fst-italic': !tarefa.descricao}">
-            {{ tarefa.descricao || 'Sem descrição.' }}
-          </p>
-        </div-->
-
-        <hr>
-
-        <div class="d-flex justify-content-center gap-3 mt-4">
-
-          <button class="btn btn-outline-secondary" routerLink="/tarefas">← Voltar</button>
-
-          <button class="btn btn-outline-primary" [routerLink]="['/tarefas', tarefa.id, 'edit']">✏️ Editar</button>
-
-          <button class="btn" [ngClass]="tarefa.concluida ? 'btn-danger' : 'btn-success'" (click)="toggleConclusao(tarefa)">
-            {{ tarefa.concluida ? "Reabrir" : "✅ Concluir" }}
-          </button>
-
-        </div>
-      </div>
     </div>
   </div>
 </div>

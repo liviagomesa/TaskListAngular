@@ -1,7 +1,7 @@
 import { CustomSyncValidators } from './../../../../provided-in-root/custom-sync-validators';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ImportanciaTarefa } from '../../enums/importancia-tarefa.enum';
-import { Subtarefa, Tag, Tarefa } from '../../tarefa.model';
+import { createEmptyTarefa, Subtarefa, Tag, Tarefa } from '../../tarefa.model';
 import { TarefaService } from '../../tarefa.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseFormComponent } from 'src/app/shared/base-form/base-form.component';
@@ -70,6 +70,10 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
   override criarEPreencherFormArraysControls(): void {
     if (this.dto.tags) this.criarEPreencherTagsControls(this.dto.tags);
     if (this.dto.subtarefas) this.criarEPreencherSubtarefasControls(this.dto.subtarefas);
+  }
+
+  protected override createEmpty(): Tarefa {
+    return createEmptyTarefa();
   }
 
   // ---------------------------------------------------------------------
