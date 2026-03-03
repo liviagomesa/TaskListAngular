@@ -1,70 +1,103 @@
 import { ParamsBusca } from '../../../../provided-in-root/params-busca.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Tarefa } from '../../tarefa.model';
-import { TarefaService } from '../../tarefa.service';
-import { BehaviorSubject, catchError, forkJoin, map, Observable, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { map, merge, Observable, shareReplay, Subject, takeUntil } from 'rxjs';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { errorTarefaState, initialTarefaState, TarefaState } from '../../tarefa.state';
-import { TarefaStore } from '../../tarefa.store';
 import { mapQpToParamsBusca } from '../../tarefa.mapper';
+import { ListaTarefasFacade } from './lista-tarefas.facade';
+import { ListaTarefasStore } from './lista-tarefas.store';
 
 @Component({
   selector: 'app-lista-tarefas',
   templateUrl: './lista-tarefas.component.html',
-  styleUrls: ['./lista-tarefas.component.scss']
+  styleUrls: ['./lista-tarefas.component.scss'],
+  providers: [ListaTarefasFacade, ListaTarefasStore]
+  // Por que declarar Store e Facade em providers se o componente só injeta a Facade?
+
+  // Porque o Angular precisa saber onde criar a Store — e ela precisa ter o mesmo escopo do componente.
+  // Se você não declarar em providers, o Angular vai procurar ela nos escopos acima e não vai encontrar
+  // (já que não tem providedIn).
 })
 export class ListaTarefasComponent implements OnInit, OnDestroy {
 
-  state$: Observable<ParamsBusca> = this.activatedRoute.queryParams.pipe(
+  // ---------------------------------------------------------------------
+  // FIELDS AND ACCESSORS
+  // ---------------------------------------------------------------------
+
+  private routeState$: Observable<ParamsBusca> = this.activatedRoute.queryParams.pipe(
     map(qp => mapQpToParamsBusca(qp)),
     shareReplay(1)
   );
+  private reload$ = new Subject<void>();
 
-  currentState!: ParamsBusca;
-
-  destroy$ = new Subject<void>;
-  appState$ = this.tarefaStore.state$;
+  protected currentRouteState!: ParamsBusca;
+  destroy$ = new Subject<void>();
+  apiState$ = this.facade.state$;
 
   filterSortForm = this.fb.group({
     concluida: new FormControl<boolean | undefined>(undefined),
     sort: new FormControl<string | null>(null)
   });
 
+  // ---------------------------------------------------------------------
+  // CONSTRUTOR E LIFECYCLE HOOKS (ANGULAR)
+  // ---------------------------------------------------------------------
+
   constructor(
-    private tarefaService: TarefaService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
-    private tarefaStore: TarefaStore
+    private facade: ListaTarefasFacade
   ) { }
 
+  /**
+   * Fluxo completo:
+   *
+   * Usuário muda filtro
+    → formulário emite valueChanges
+    → atualizarFilterSort() navega e muda a URL
+    → routeState$ emite
+    → merge emite
+    → carregarDados() é chamado
+   */
   ngOnInit(): void {
-    // assinamos o state logo no início para atualizar a propriedade currentState sempre que emitir
-    this.state$.pipe(takeUntil(this.destroy$)).subscribe(s => {
-      this.currentState = s;
-      this.carregarDados();
-
-      let qpConcluida = s.filters?.find(f => f.propriedade == 'concluida')?.valor as string;
-      let concluidaAsBoolean = this.concluidaAsBoolean(qpConcluida);
+    // Responsabilidade 1: manter currentState e o formulário sincronizados com a URL
+    this.routeState$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(s => {
+      this.currentRouteState = s;
 
       this.filterSortForm.patchValue({
         sort: s.sort,
-        concluida: concluidaAsBoolean
+        concluida: this.concluidaAsBoolean(
+          s.filters?.find(f => f.propriedade === 'concluida')?.valor as string
+        )
       }, { emitEvent: false });
     });
-    // assinamos os query params da rota logo no início para recarregar tarefas sempre que emitir (inclusive no primeiro carregamento)
-    //this.activatedRoute.queryParams.subscribe(() => this.carregarTarefas());
 
+    // Responsabilidade 2: carregar dados sempre que a rota mudar OU reload for solicitado
+    merge( // cria um observable que emite sempre que A ou B emitir
+      this.routeState$,
+      // reload$ é um Subject<void> → transformamos o sinal vazio no último estado conhecido da rota
+      this.reload$.pipe(map(() => this.currentRouteState))
+    ).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(routeState => this.facade.carregarDados(routeState));
+
+    // Responsabilidade 3: mudanças no formulário atualizam a URL
     this.filterSortForm.valueChanges.pipe(
       takeUntil(this.destroy$)
-    ).subscribe(() => this.atualizarfilterSort());
+    ).subscribe(() => this.atualizarFilterSort());
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  // ---------------------------------------------------------------------
+  // MÉTODOS DA CLASSE
+  // ---------------------------------------------------------------------
 
   private concluidaAsBoolean(qpConcluida: string) {
     switch (qpConcluida) {
@@ -74,19 +107,17 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
     }
   }
 
-  // --- Ações de UI ---
-
   protected excluirConcluidas(): void {
-    this.tarefaService.excluirConcluidas().subscribe({
+    this.facade.excluirConcluidas().subscribe({
       next: (resultado) => {
         if (resultado === null) {
           alert('Não há tarefas concluídas para excluir!');
           return;
         }
-        this.carregarDados();
+        this.reload$.next();
         alert('Tarefas excluídas com sucesso!');
       },
-      error: (err) => alert('Erro ao excluir')
+      error: () => this.facade.setError()
     });
   }
 
@@ -94,12 +125,12 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
     this.router.navigate([], {
       queryParamsHandling: 'merge',
       queryParams: {
-        page: Number(this.activatedRoute.snapshot.queryParamMap.get('page') ?? 1) + 1
+        page: (this.currentRouteState.page ?? 1) + 1
       }
     });
   }
 
-  atualizarfilterSort() {
+  atualizarFilterSort() {
     this.router.navigate([], {
       queryParamsHandling: 'merge',
       queryParams: {
@@ -110,17 +141,13 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
     });
   }
 
-  onExcluida() {
-    this.carregarDados();
+  onTarefaAtualizada() {
+    this.reload$.next();
   }
 
-  onConcluida() {
-    this.carregarDados();
-  }
-
+  /** Método para o botão "Tentar novamente" do template. */
   carregarDados() {
-    this.tarefaStore.carregarDados(this.currentState);
+    this.reload$.next();
   }
-
 
 }

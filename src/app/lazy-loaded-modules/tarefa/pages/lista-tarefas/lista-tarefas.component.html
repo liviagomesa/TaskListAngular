@@ -46,7 +46,7 @@
 
       </form>
 
-      <ng-container *ngIf="appState$ | async as state">
+      <ng-container *ngIf="apiState$ | async as state">
 
         <div *ngIf="state.loading">
           ⏳ Carregando tarefas...
@@ -62,8 +62,8 @@
             <app-tarefa-card
               *ngFor="let t of state.dados"
               [tarefa]="t"
-              (excluida)="onExcluida()"
-              (concluida)="onConcluida()">
+              (excluida)="onTarefaAtualizada()"
+              (concluida)="onTarefaAtualizada()">
             </app-tarefa-card>
           </ul>
         </ng-container>
@@ -84,7 +84,7 @@
         </div>
 
         <div class="text-center mt-2">
-          Você está na página {{ (state$ | async)?.page }}
+          Você está na página {{ currentRouteState.page }}
           <i class="bi bi-arrow-right-circle ms-1" (click)="proximaPagina()" style="cursor: pointer;"></i>
         </div>
 
