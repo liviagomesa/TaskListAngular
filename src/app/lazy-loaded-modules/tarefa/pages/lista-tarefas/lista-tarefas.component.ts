@@ -1,9 +1,7 @@
-import { ParamsBusca } from '../../../../provided-in-root/params-busca.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { map, merge, Observable, shareReplay, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { mapQpToParamsBusca } from '../../tarefa.mapper';
 import { ListaTarefasFacade } from './lista-tarefas.facade';
 import { ListaTarefasStore } from './lista-tarefas.store';
 
@@ -24,15 +22,8 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
   // FIELDS AND ACCESSORS
   // ---------------------------------------------------------------------
 
-  private routeState$: Observable<ParamsBusca> = this.activatedRoute.queryParams.pipe(
-    map(qp => mapQpToParamsBusca(qp)),
-    shareReplay(1)
-  );
-  private reload$ = new Subject<void>();
-
-  protected currentRouteState!: ParamsBusca;
-  destroy$ = new Subject<void>();
-  apiState$ = this.facade.state$;
+  private destroy$ = new Subject<void>();
+  state$ = this.facade.state$;
 
   filterSortForm = this.fb.group({
     concluida: new FormControl<boolean | undefined>(undefined),
@@ -44,50 +35,21 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
   // ---------------------------------------------------------------------
 
   constructor(
-    private activatedRoute: ActivatedRoute,
+    private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
     private facade: ListaTarefasFacade
   ) { }
 
-  /**
-   * Fluxo completo:
-   *
-   * Usuário muda filtro
-    → formulário emite valueChanges
-    → atualizarFilterSort() navega e muda a URL
-    → routeState$ emite
-    → merge emite
-    → carregarDados() é chamado
-   */
+  // Fluxo:
+  // Primeiro disparador: usuario mexe no form
+  // Sequência de atualizações: rota → state → template (inclusive values form)
+  // Se usuário entra direto na rota, continua válido (o fluxo só começa de um ponto diferente)
+  // NÃO gera loop porque o Angular não dispara valueChanges em setValue se o valor não mudou
   ngOnInit(): void {
-    // Responsabilidade 1: manter currentState e o formulário sincronizados com a URL
-    this.routeState$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(s => {
-      this.currentRouteState = s;
-
-      this.filterSortForm.patchValue({
-        sort: s.sort,
-        concluida: this.concluidaAsBoolean(
-          s.filters?.find(f => f.propriedade === 'concluida')?.valor as string
-        )
-      }, { emitEvent: false });
-    });
-
-    // Responsabilidade 2: carregar dados sempre que a rota mudar OU reload for solicitado
-    merge( // cria um observable que emite sempre que A ou B emitir
-      this.routeState$,
-      // reload$ é um Subject<void> → transformamos o sinal vazio no último estado conhecido da rota
-      this.reload$.pipe(map(() => this.currentRouteState))
-    ).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(routeState => this.facade.carregarDados(routeState));
-
-    // Responsabilidade 3: mudanças no formulário atualizam a URL
-    this.filterSortForm.valueChanges.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(() => this.atualizarFilterSort());
+    this.atualizarStateFromRoute();
+    this.reagirAoStateNoForm();
+    this.setRouteFromForm();
   }
 
   ngOnDestroy(): void {
@@ -95,59 +57,75 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ---------------------------------------------------------------------
-  // MÉTODOS DA CLASSE
-  // ---------------------------------------------------------------------
+  atualizarStateFromRoute(): void {
+    this.route.queryParamMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(queryParamMap => {
+        const sort = queryParamMap.get('sort');
+        const page = Number(queryParamMap.get('page')) || 1;
+        const concluida = this.concluidaAsBoolean(queryParamMap.get('concluida'));
+        this.facade.atualizarDadosFiltragem(sort, page, concluida);
+      });
+  }
 
-  private concluidaAsBoolean(qpConcluida: string) {
-    switch (qpConcluida) {
+  /**
+   * campos de formulário de qualquer tipo eu não consigo puxar do state$ direto no template
+   * (como a página, que é um texto normal, ou a lista de tarefas filtrada),
+   * mas consigo usar setValue no ts
+   */
+  reagirAoStateNoForm(): void {
+    this.state$.pipe(takeUntil(this.destroy$)).subscribe(state => {
+      this.filterSortForm.get('sort')?.setValue(state.sort);
+      this.filterSortForm.get('concluida')?.setValue(state.filtrarConcluidas);
+    });
+  }
+
+  setRouteFromForm(): void {
+    this.filterSortForm.valueChanges.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.router.navigate([], {
+        queryParamsHandling: 'merge', // Mantém os outros parâmetros já existentes
+        queryParams: {
+          concluida: this.filterSortForm.get('concluida')?.value, // Se for undefined, o Angular remove o param
+          sort: this.filterSortForm.get('sort')?.value,
+          page: 1
+        }
+      });
+    });
+  }
+
+  private concluidaAsBoolean(concluidaAsString: string | null) {
+    switch (concluidaAsString) {
       case 'true': return true;
       case 'false': return false;
       default: return undefined;
     }
   }
 
-  protected excluirConcluidas(): void {
-    this.facade.excluirConcluidas().subscribe({
-      next: (resultado) => {
-        if (resultado === null) {
-          alert('Não há tarefas concluídas para excluir!');
-          return;
-        }
-        this.reload$.next();
-        alert('Tarefas excluídas com sucesso!');
-      },
-      error: () => this.facade.setError()
-    });
+  // ---------------------------------------------------------------------
+  // MÉTODOS DA CLASSE
+  // ---------------------------------------------------------------------
+
+  excluirConcluidas(): void {
+    this.facade.excluirConcluidas();
+  }
+
+  toggleConclusao(id: number) {
+    this.facade.toggleConclusao(id);
+  }
+
+  deleteById(id: number) {
+    this.facade.deleteById(id);
   }
 
   proximaPagina() {
     this.router.navigate([], {
       queryParamsHandling: 'merge',
       queryParams: {
-        page: (this.currentRouteState.page ?? 1) + 1
+        page: (Number(this.route.snapshot.queryParamMap.get('page')) ?? 1) + 1
       }
     });
-  }
-
-  atualizarFilterSort() {
-    this.router.navigate([], {
-      queryParamsHandling: 'merge',
-      queryParams: {
-        concluida: this.filterSortForm.get('concluida')?.value, // Se for undefined, o Angular remove o param
-        sort: this.filterSortForm.get('sort')?.value,
-        page: 1
-      }
-    });
-  }
-
-  onTarefaAtualizada() {
-    this.reload$.next();
-  }
-
-  /** Método para o botão "Tentar novamente" do template. */
-  carregarDados() {
-    this.reload$.next();
   }
 
 }

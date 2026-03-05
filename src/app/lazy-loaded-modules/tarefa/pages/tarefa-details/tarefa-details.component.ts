@@ -32,13 +32,14 @@ export class TarefaDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     /**
-     * Usamos route.paramMap e route.data como Observables (via subscribe) para suportar rotas dinâmicas,
-     * ou seja, casos onde navegamos de /tarefas/1 para /tarefas/2 sem destruir o componente.
-     * Nesses casos, o Angular reutiliza a instância do componente e apenas emite novos valores nos Observables da rota.
-     *
      * Uma alternativa mais simples seria usar route.snapshot.paramMap e route.snapshot.data,
-     * que capturam o valor da rota no momento em que o componente foi criado — sem necessidade de subscribe.
-     * Porém, snapshot não detecta mudanças posteriores, então só funciona corretamente em rotas não-dinâmicas.
+     * que capturam o valor da rota no momento da chamada, isto é, no momento da criação do componente
+     * (já que estamos no ngOnInit), sem necessidade de subscribe.
+     *
+     * Porém, se o usuário navegar de /tarefas/1 para /tarefas/2, por exemplo, o Angular não destroi
+     * e recria o componente: a função ngOnInit não é re-executada.
+     * Por isso, usamos route.paramMap e route.data como Observables (via subscribe),
+     * para que o atributo que guarda o parâmetro da rota seja dinâmico.
      *
      * Optamos por não usar snapshot aqui pois seria redundante: route.paramMap e route.data já emitem
      * imediatamente com o valor atual na primeira inscrição, cobrindo o mesmo caso que o snapshot cobriria.

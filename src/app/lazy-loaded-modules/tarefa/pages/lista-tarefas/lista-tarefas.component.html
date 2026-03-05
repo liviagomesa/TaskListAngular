@@ -23,7 +23,7 @@
           </div>
           <!-- Botão excluir concluídas -->
           <div class="col-auto">
-            <button class="btn btn-danger" (click)="excluirConcluidas()">Excluir concluídas</button>
+            <button class="btn btn-danger" (click)="excluirConcluidas()" [disabled]="">Excluir concluídas</button>
           </div>
         </div>
 
@@ -46,47 +46,50 @@
 
       </form>
 
-      <ng-container *ngIf="apiState$ | async as state">
+      <ng-container *ngIf="state$ | async as state">
 
-        <div *ngIf="state.loading">
-          ⏳ Carregando tarefas...
-        </div>
+        <div *ngIf="state.loadingDados">⏳ Carregando tarefas...</div>
+        <div *ngIf="state.errorDados">⚠️ Erro ao carregar dados. Recarregue a página para tentar novamente.</div>
 
-        <div *ngIf="state.error && !state.loading">
-          ⚠️ Erro: Não foi possível conectar ao servidor.
-          <button class="btn btn-danger" (click)="carregarDados()">Tentar novamente</button>
-        </div>
+        <div *ngIf="state.excluindoConcluidas">⏳ Excluindo tarefas concluídas...</div>
+        <div *ngIf="state.errorExcluirConcluidas">⚠️ Erro ao excluir concluídas. Tente novamente.</div>
 
-        <ng-container *ngIf="!state.loading && !state.error">
-          <ul class="list-group" *ngIf="state.dados.length > 0; else empty">
-            <app-tarefa-card
-              *ngFor="let t of state.dados"
-              [tarefa]="t"
-              (excluida)="onTarefaAtualizada()"
-              (concluida)="onTarefaAtualizada()">
-            </app-tarefa-card>
-          </ul>
+        <div *ngIf="state.salvandoConclusao">⏳ Salvando conclusão...</div>
+        <div *ngIf="state.errorSalvarConclusao">⚠️ Erro ao salvar conclusão. Tente novamente.</div>
+
+        <div *ngIf="state.excluindoTarefa">⏳ Excluindo tarefa...</div>
+        <div *ngIf="state.errorExcluirTarefa">⚠️ Erro ao excluir tarefa. Tente novamente.</div>
+
+        <ng-container *ngIf="!state.loadingDados && !state.errorDados">
+
+          <ng-container *ngIf="state.lista.length > 0; else empty">
+            <ul class="list-group">
+              <app-tarefa-card
+                *ngFor="let t of state.lista"
+                [tarefa]="t"
+                (excluida)="deleteById(t.id!)"
+                (concluida)="toggleConclusao(t.id!)">
+              </app-tarefa-card>
+            </ul>
+
+            <!-- Cada async pipe inserido no html gera um subscribe/unsubscribe individual
+            (ou seja, cada vez que aparece no template, será uma execução do método do http)
+            Usamos "as dados" para conseguir chamar async pipe uma única vez e depois só referenciar a variável "dados". -->
+            <div class="text-center mt-2" [class.text-success]="state.total !== 0 && state.concluidas === state.total">
+                {{ state.concluidas }}/{{ state.total }} tarefa(s) concluída(s)
+            </div>
+
+            <div class="text-center mt-2">
+              Você está na página {{ state.page }}
+              <i class="bi bi-arrow-right-circle ms-1" (click)="proximaPagina()" style="cursor: pointer;"></i>
+            </div>
+          </ng-container>
+
+          <ng-template #empty>
+            <div>📭 Nenhuma tarefa encontrada.</div>
+          </ng-template>
+
         </ng-container>
-
-        <ng-template #empty>
-          <div *ngIf="!state.loading && !state.error">
-            📭 Nenhuma tarefa encontrada.
-          </div>
-        </ng-template>
-
-        <!-- Cada async pipe inserido no html gera um subscribe/unsubscribe individual
-        (ou seja, cada vez que aparece no template, será uma execução do método do http)
-        Usamos "as dados" para conseguir chamar async pipe uma única vez e depois só referenciar a variável "dados". -->
-        <div class="text-center mt-2"
-            *ngIf="!state.loading && !state.error"
-            [class.text-success]="state.total !== 0 && state.concluidas === state.total">
-            {{ state.concluidas }}/{{ state.total }} tarefa(s) concluída(s)
-        </div>
-
-        <div class="text-center mt-2">
-          Você está na página {{ currentRouteState.page }}
-          <i class="bi bi-arrow-right-circle ms-1" (click)="proximaPagina()" style="cursor: pointer;"></i>
-        </div>
 
       </ng-container>
 

@@ -1,7 +1,6 @@
-import { Component, Input, OnInit, Output, EventEmitter, ElementRef, OnChanges } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ImportanciaTarefa } from '../../enums/importancia-tarefa.enum';
 import { Tarefa } from '../../tarefa.model';
-import { TarefaService } from '../../tarefa.service';
 
 @Component({
   selector: 'app-tarefa-card',
@@ -16,7 +15,7 @@ export class TarefaCardComponent implements OnInit {
   @Output() excluida = new EventEmitter<void>();
   @Output() concluida = new EventEmitter<void>();
 
-  constructor(private tarefaService: TarefaService) { }
+  constructor() { }
 
   ngOnInit(): void {
     switch (this.tarefa.importancia) {
@@ -34,18 +33,12 @@ export class TarefaCardComponent implements OnInit {
 
   protected excluirTarefa(): void {
     if (confirm("Tem certeza que deseja excluir esta tarefa? Essa ação não pode ser desfeita.")) {
-      this.tarefaService.deleteById(this.tarefa.id as number).subscribe({
-        next: () => this.excluida.emit(),
-        error: erro => alert(`Erro na exclusão da tarefa: ${erro}`)
-      });
+      this.excluida.emit();
     }
   }
 
   protected checkTarefa(): void {
-    this.tarefaService.toggleConclusaoById(this.tarefa.id as number).subscribe({
-      next: () => this.concluida.emit(),
-      error: erro => alert(`Erro na conclusão da tarefa: ${erro}`)
-    });
+    this.concluida.emit();
   }
 
 }

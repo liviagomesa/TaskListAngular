@@ -51,9 +51,7 @@
             </button>
 
             <div *ngIf="state.salvandoConclusao">⏳ Salvando...</div>
-            <div *ngIf="state.errorSalvar && !state.salvandoConclusao">
-              ⚠️ Erro: Não foi possível conectar ao servidor para salvar. Tente novamente.
-            </div>
+            <div *ngIf="state.errorSalvar">⚠️ Erro: Não foi possível conectar ao servidor para salvar. Tente novamente.</div>
 
           </div>
         </div>

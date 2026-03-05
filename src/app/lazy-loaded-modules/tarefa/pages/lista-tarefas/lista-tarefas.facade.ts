@@ -1,55 +1,106 @@
-import { catchError, EMPTY, forkJoin, Subject, switchMap } from 'rxjs';
+import { forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ParamsBusca } from 'src/app/provided-in-root/params-busca.model';
 import { ListaTarefasStore } from './lista-tarefas.store';
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { TarefaService } from '../../tarefa.service';
+import { Tarefa } from '../../tarefa.model';
 
 @Injectable() // sem providedIn
-export class ListaTarefasFacade {
+export class ListaTarefasFacade implements OnDestroy {
+
+  // ---------------------------------------------------------------------
+  // FIELDS AND ACCESSORS
+  // ---------------------------------------------------------------------
 
   state$ = this.store.state$;
+  private destroy$ = new Subject<void>();
 
-  // Recebe pedidos de carregamento vindos de fora
-  private requisicao$ = new Subject<ParamsBusca>();
+  // ---------------------------------------------------------------------
+  // CONSTRUTOR E LIFECYCLE HOOKS (ANGULAR)
+  // ---------------------------------------------------------------------
 
-  // Fluxo:
-  // Componente → requisicao$ → [lógica interna] → state$ → template
-  //                entrada                        saída
+  constructor(private store: ListaTarefasStore, private service: TarefaService) { }
 
-  constructor(private store: ListaTarefasStore, private service: TarefaService) {
-    // "sempre que alguém colocar algo na caixa de entrada, processa e joga o resultado no estado."
-    this.requisicao$.pipe(
-      switchMap(paramsBusca => { // recebe cada emissão do requisicao$ e troca por um novo Observable: o forkJoin com as requisições HTTP
-        this.store.setLoading();
-        return forkJoin({
-          tarefas: this.service.findAll(paramsBusca),
-          total: this.service.countAll(),
-          concluidas: this.service.countConcluidas()
-        }).pipe(
-          catchError(() => {
-            this.store.setError();
-            return EMPTY;
-          })
-        );
-      })
-    ).subscribe(res => {
-      this.store.setDados(res.tarefas, Number(res.total), Number(res.concluidas));
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ---------------------------------------------------------------------
+  // MÉTODOS DA CLASSE
+  // ---------------------------------------------------------------------
+
+  atualizarDadosFiltragem(sort: string | null, page: number, filtrarConcluidas: boolean | undefined) {
+    this.store.atualizarDadosFiltragem(sort, page, filtrarConcluidas);
+    this.findDadosServidor().subscribe({
+      next: dadosServidor => this.store.atualizarDadosServidor(dadosServidor.tarefas, dadosServidor.total, dadosServidor.concluidas),
+      error: () => this.store.setErrorDados()
     });
   }
 
-  /**
-   * Sempre que a rota mudar OU reload for solicitado, componente reage chamando este método, que apenas emite requisicao$
-   */
-  carregarDados(params: ParamsBusca) {
-    this.requisicao$.next(params);
+  private findDadosServidor(): Observable<{ tarefas: Tarefa[], total: number, concluidas: number }> {
+    this.store.setLoadingDados();
+    return forkJoin({
+      tarefas: this.service.findAll(this.getParamsBuscaFromState()),
+      total: this.service.countAll(),
+      concluidas: this.service.countConcluidas()
+    }).pipe(takeUntil(this.destroy$));
+  }
+
+  private getParamsBuscaFromState(): ParamsBusca {
+    let paramsBusca: ParamsBusca = { page: this.store.getPage() };
+    if (this.store.getSort() !== null) paramsBusca.sort = this.store.getSort()!;
+    if (this.store.getFiltrarConcluidas() !== undefined) paramsBusca.filters = [{
+      propriedade: 'concluida',
+      condicao: 'equals',
+      valor: this.store.getFiltrarConcluidas()!
+    }];
+    return paramsBusca;
   }
 
   excluirConcluidas() {
-    return this.service.excluirConcluidas(); // componente subscreve o retorno
+    this.store.setExcluindoConcluidas();
+    this.service.excluirConcluidas()
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() => this.findDadosServidor())
+      ).subscribe({
+        next: dadosServidor => this.store.atualizarDadosServidor(dadosServidor.tarefas, dadosServidor.total, dadosServidor.concluidas),
+        error: () => {
+          this.store.setErrorExcluirConcluidas();
+          this.store.setErrorDados();
+        }
+      });
   }
 
-  setError() {
-    this.store.setError();
+  toggleConclusao(id: number) {
+    this.store.setSalvandoConclusao();
+    this.service.toggleConclusaoById(id)
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() => this.findDadosServidor())
+      ).subscribe({
+        next: dadosServidor => this.store.atualizarDadosServidor(dadosServidor.tarefas, dadosServidor.total, dadosServidor.concluidas),
+        error: () => {
+          this.store.setErrorSalvarConclusao();
+          this.store.setErrorDados();
+        }
+      });
+  }
+
+  deleteById(id: number) {
+    this.store.setExcluindoTarefa();
+    this.service.deleteById(id)
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() => this.findDadosServidor())
+      ).subscribe({
+        next: dadosServidor => this.store.atualizarDadosServidor(dadosServidor.tarefas, dadosServidor.total, dadosServidor.concluidas),
+        error: () => {
+          this.store.setErrorExcluirTarefa();
+          this.store.setErrorDados();
+        }
+      });
   }
 
 }

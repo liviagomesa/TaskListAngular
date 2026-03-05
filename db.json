@@ -1,12 +1,33 @@
 {
   "tarefas": [
     {
+      "id": 1,
+      "titulo": "Limpar quintal",
+      "anotacoes": "A limpeza será feita antes de qualquer coisa pra garantir que a sujeira não se espalhe pela casa.",
+      "prazo": "2025-11-20",
+      "importancia": 3,
+      "concluida": false,
+      "subtarefas": [
+        {
+          "id": "",
+          "tarefaId": 1,
+          "titulo": "Teste",
+          "prazo": "2026-03-01",
+          "concluida": true,
+          "dataCriacao": "2026-03-01T22:48:21.467Z"
+        }
+      ],
+      "newTag": "",
+      "tags": [],
+      "dataCriacao": "2025-10-01"
+    },
+    {
       "id": 2,
       "titulo": "Ir ao médico",
       "anotacoes": "Endocrinologista ou clínico geral, o que conseguir horário primeiro.",
       "prazo": "2025-11-13",
       "importancia": 1,
-      "concluida": true,
+      "concluida": false,
       "subtarefas": [],
       "newTag": "",
       "tags": [
@@ -32,27 +53,6 @@
         }
       ],
       "dataCriacao": "2025-10-02"
-    },
-    {
-      "id": 1,
-      "titulo": "Limpar quintal",
-      "anotacoes": "A limpeza será feita antes de qualquer coisa pra garantir que a sujeira não se espalhe pela casa.",
-      "prazo": "2025-11-20",
-      "importancia": 3,
-      "concluida": false,
-      "subtarefas": [
-        {
-          "id": "",
-          "tarefaId": 1,
-          "titulo": "Teste",
-          "prazo": "2026-03-01",
-          "concluida": true,
-          "dataCriacao": "2026-03-01T22:48:21.467Z"
-        }
-      ],
-      "newTag": "",
-      "tags": [],
-      "dataCriacao": "2025-10-01"
     }
   ],
   "subtarefas": [
