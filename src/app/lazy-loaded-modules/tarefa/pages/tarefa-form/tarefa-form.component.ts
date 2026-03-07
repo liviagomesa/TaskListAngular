@@ -1,16 +1,18 @@
 import { CustomSyncValidators } from './../../../../provided-in-root/custom-sync-validators';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ImportanciaTarefa } from '../../enums/importancia-tarefa.enum';
-import { createEmptyTarefa, Subtarefa, Tag, Tarefa } from '../../tarefa.model';
-import { TarefaService } from '../../tarefa.service';
+import { Subtarefa, Tag, Tarefa } from '../../tarefa.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseFormComponent } from 'src/app/shared/base-form/base-form.component';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { TarefaFormFacade } from './tarefa-form.facade';
+import { BaseFormStore } from 'src/app/shared/base-form/base-form.store';
 
 @Component({
   selector: 'app-tarefa-form',
   templateUrl: './tarefa-form.component.html',
-  styleUrls: ['./tarefa-form.component.scss']
+  styleUrls: ['./tarefa-form.component.scss'],
+  providers: [TarefaFormFacade, BaseFormStore]
 })
 // caso rota de edição, antes de carregar este componente, o resolver busca a tarefa do id fornecido e salva em activatedRoute.data (que é um observable)
 export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements OnInit, OnDestroy {
@@ -34,13 +36,12 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
   // ---------------------------------------------------------------------
 
   constructor(
-    private tarefaService: TarefaService,
-    activatedRoute: ActivatedRoute,
+    route: ActivatedRoute,
     router: Router,
-    fb: FormBuilder
+    fb: FormBuilder,
+    override facade: TarefaFormFacade,
   ) {
-    super(router, activatedRoute, fb);
-    this.setService(tarefaService); // necessário chamar no construtor de todas as classes que estendem BaseForm!!
+    super(router, route, fb, facade);
   }
 
   // obs.: se o id for inválido, este método nem chegará a ser executado, pois o resolver roda antes e encaminha para not-found
@@ -67,13 +68,9 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
     });
   }
 
-  override criarEPreencherFormArraysControls(): void {
-    if (this.dto.tags) this.criarEPreencherTagsControls(this.dto.tags);
-    if (this.dto.subtarefas) this.criarEPreencherSubtarefasControls(this.dto.subtarefas);
-  }
-
-  protected override createEmpty(): Tarefa {
-    return createEmptyTarefa();
+  override criarEPreencherFormArraysControls(dto: Tarefa): void {
+    if (dto.tags) this.criarEPreencherTagsControls(dto.tags);
+    if (dto.subtarefas) this.criarEPreencherSubtarefasControls(dto.subtarefas);
   }
 
   // ---------------------------------------------------------------------
