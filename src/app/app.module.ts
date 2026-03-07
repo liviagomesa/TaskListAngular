@@ -1,5 +1,7 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -29,7 +31,17 @@ import { HttpClientModule } from '@angular/common/http';
     TarefaModule,
     NgbModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 5000,
+      extendedTimeOut: 2000,   // tempo extra se o usuário passar o mouse em cima
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      closeButton: true,        // mostra um X para fechar manualmente
+      progressBar: true,        // barra de progresso mostrando o tempo restante
+      //enableHtml: true,         // permite HTML na mensagem (ex: links, negrito)
+    })
   ],
   providers: [
     {

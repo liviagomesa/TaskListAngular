@@ -102,13 +102,11 @@
     </div>
   </div>
 
-  <div class="col-12">
-    <button type="submit" class="btn btn-primary">Enviar</button>
+  <div class="col-12" *ngIf="state$ | async as state">
+    <button type="submit" class="btn btn-primary" [disabled]="state.salvando">
+      <span *ngIf="state.salvando" class="spinner-border spinner-border-sm me-1"></span>
+      {{ state.salvando ? 'Salvando...' : 'Salvar' }}
+    </button>
   </div>
-
-  <ng-container *ngIf="state$ | async as state">
-    <div *ngIf="state.salvando">⏳ Salvando...</div>
-    <div *ngIf="state.errorSalvar">⚠️ Erro: Não foi possível conectar ao servidor para salvar. Tente novamente.</div>
-  </ng-container>
 
 </form>

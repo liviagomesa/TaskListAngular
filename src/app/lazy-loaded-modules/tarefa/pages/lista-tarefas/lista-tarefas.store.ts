@@ -24,6 +24,10 @@ export class ListaTarefasStore {
     return this._state$.value.filtrarConcluidas;
   }
 
+  getConcluidas(): number {
+    return this._state$.value.concluidas;
+  }
+
   // SETTERS
 
   atualizarDadosFiltragem(sort: string | null, page: number, filtrarConcluidas: boolean | undefined) {

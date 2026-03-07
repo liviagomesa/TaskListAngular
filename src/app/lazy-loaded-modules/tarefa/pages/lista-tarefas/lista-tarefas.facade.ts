@@ -4,6 +4,7 @@ import { ListaTarefasStore } from './lista-tarefas.store';
 import { Injectable, OnDestroy } from "@angular/core";
 import { TarefaService } from '../../tarefa.service';
 import { Tarefa } from '../../tarefa.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable() // sem providedIn
 export class ListaTarefasFacade implements OnDestroy {
@@ -19,7 +20,7 @@ export class ListaTarefasFacade implements OnDestroy {
   // CONSTRUTOR E LIFECYCLE HOOKS (ANGULAR)
   // ---------------------------------------------------------------------
 
-  constructor(private store: ListaTarefasStore, private service: TarefaService) { }
+  constructor(private store: ListaTarefasStore, private service: TarefaService, private toastr: ToastrService) { }
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -59,16 +60,24 @@ export class ListaTarefasFacade implements OnDestroy {
   }
 
   excluirConcluidas() {
+    if (this.store.getConcluidas() === 0) {
+      this.toastr.info('Nenhuma tarefa concluída para excluir.');
+      return;
+    }
     this.store.setExcluindoConcluidas();
     this.service.excluirConcluidas()
       .pipe(
         takeUntil(this.destroy$),
         switchMap(() => this.findDadosServidor())
       ).subscribe({
-        next: dadosServidor => this.store.atualizarDadosServidor(dadosServidor.tarefas, dadosServidor.total, dadosServidor.concluidas),
+        next: dadosServidor => {
+          this.store.atualizarDadosServidor(dadosServidor.tarefas, dadosServidor.total, dadosServidor.concluidas);
+          this.toastr.success('Tarefas excluídas com sucesso!');
+        },
         error: () => {
           this.store.setErrorExcluirConcluidas();
           this.store.setErrorDados();
+          this.toastr.error('Não foi possível excluir. Tente novamente.');
         }
       });
   }
@@ -84,6 +93,7 @@ export class ListaTarefasFacade implements OnDestroy {
         error: () => {
           this.store.setErrorSalvarConclusao();
           this.store.setErrorDados();
+          this.toastr.error('Erro ao concluir tarefa. Tente novamente.');
         }
       });
   }
@@ -99,6 +109,7 @@ export class ListaTarefasFacade implements OnDestroy {
         error: () => {
           this.store.setErrorExcluirTarefa();
           this.store.setErrorDados();
+          this.toastr.error('Erro ao excluir tarefa. Tente novamente.');
         }
       });
   }

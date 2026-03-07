@@ -7,6 +7,8 @@ import { CamelCasePipe } from './camel-case.pipe';
 import { ErrorMsgComponent } from './error-msg/error-msg.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskModule } from "ngx-mask";
+import { AlertComponent } from './alert/alert/alert.component';
+import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -15,20 +17,23 @@ import { NgxMaskModule } from "ngx-mask";
     SlugifyPipe,
     InputFieldComponent,
     CamelCasePipe,
-    ErrorMsgComponent
+    ErrorMsgComponent,
+    AlertComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     NgxMaskModule.forRoot(),
-    FormsModule
+    FormsModule,
+    NgbAlertModule
   ],
   exports: [
     DiasDesdePipe,
     SlugifyPipe,
     InputFieldComponent,
     CamelCasePipe,
-    ErrorMsgComponent
+    ErrorMsgComponent,
+    AlertComponent
   ]
 })
 export class SharedModule { }

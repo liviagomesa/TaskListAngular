@@ -46,12 +46,10 @@
 
             <button class="btn btn-outline-primary" [routerLink]="['/tarefas', tarefa.id, 'edit']">✏️ Editar</button>
 
-            <button class="btn" [ngClass]="tarefa.concluida ? 'btn-danger' : 'btn-success'" (click)="toggleConclusao()">
-              {{ tarefa.concluida ? "Reabrir" : "✅ Concluir" }}
+            <button class="btn" [ngClass]="tarefa.concluida ? 'btn-danger' : 'btn-success'" (click)="toggleConclusao()" [disabled]="state.salvandoConclusao">
+              <span *ngIf="state.salvandoConclusao" class="spinner-border spinner-border-sm me-1"></span>
+              {{ state.salvandoConclusao ? 'Salvando...' : (tarefa.concluida ? "Reabrir" : "✅ Concluir") }}
             </button>
-
-            <div *ngIf="state.salvandoConclusao">⏳ Salvando...</div>
-            <div *ngIf="state.errorSalvar">⚠️ Erro: Não foi possível conectar ao servidor para salvar. Tente novamente.</div>
 
           </div>
         </div>

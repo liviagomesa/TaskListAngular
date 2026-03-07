@@ -22,8 +22,11 @@
             </div>
           </div>
           <!-- Botão excluir concluídas -->
-          <div class="col-auto">
-            <button class="btn btn-danger" (click)="excluirConcluidas()" [disabled]="">Excluir concluídas</button>
+          <div class="col-auto" *ngIf="state$ | async as state">
+            <button class="btn btn-danger" (click)="excluirConcluidas()" [disabled]="state.excluindoConcluidas">
+              <span *ngIf="state.excluindoConcluidas" class="spinner-border spinner-border-sm me-1"></span>
+              {{ state.excluindoConcluidas ? 'Excluindo...' : 'Excluir concluídas' }}
+            </button>
           </div>
         </div>
 
@@ -50,15 +53,6 @@
 
         <div *ngIf="state.loadingDados">⏳ Carregando tarefas...</div>
         <div *ngIf="state.errorDados">⚠️ Erro ao carregar dados. Recarregue a página para tentar novamente.</div>
-
-        <div *ngIf="state.excluindoConcluidas">⏳ Excluindo tarefas concluídas...</div>
-        <div *ngIf="state.errorExcluirConcluidas">⚠️ Erro ao excluir concluídas. Tente novamente.</div>
-
-        <div *ngIf="state.salvandoConclusao">⏳ Salvando conclusão...</div>
-        <div *ngIf="state.errorSalvarConclusao">⚠️ Erro ao salvar conclusão. Tente novamente.</div>
-
-        <div *ngIf="state.excluindoTarefa">⏳ Excluindo tarefa...</div>
-        <div *ngIf="state.errorExcluirTarefa">⚠️ Erro ao excluir tarefa. Tente novamente.</div>
 
         <ng-container *ngIf="!state.loadingDados && !state.errorDados">
 

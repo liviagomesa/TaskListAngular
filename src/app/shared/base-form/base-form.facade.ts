@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { delay, Subject, takeUntil } from 'rxjs';
 import { BaseService } from '../base-service/base.service';
 import { BaseFormStore } from './base-form.store';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export abstract class BaseFormFacade<D extends { id?: number | null }> implements OnDestroy {
@@ -17,7 +18,7 @@ export abstract class BaseFormFacade<D extends { id?: number | null }> implement
   // CONSTRUTOR E LIFECYCLE HOOKS (ANGULAR)
   // ---------------------------------------------------------------------
 
-  constructor(private store: BaseFormStore<D>, private service: BaseService<D>) { }
+  constructor(private store: BaseFormStore<D>, private service: BaseService<D>, private toastr: ToastrService) { }
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -40,8 +41,14 @@ export abstract class BaseFormFacade<D extends { id?: number | null }> implement
       // takeUntil é necessário para o caso do componente ser destruído antes da resposta chegar: o Angular tentaria atualizar uma store já destruída
       .pipe(takeUntil(this.destroy$)/*, take(1)*/, delay(2000))
       .subscribe({
-        next: t => this.store.atualizarDtoFromApi(t),
-        error: () => this.store.setErrorSalvar()
+        next: t => {
+          this.store.atualizarDtoFromApi(t);
+          this.toastr.success('Salvo com sucesso!');
+        },
+        error: () => {
+          this.store.setErrorSalvar();
+          this.toastr.error('Não foi possível salvar. Tente novamente.');
+        }
       });
   }
 

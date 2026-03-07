@@ -3,6 +3,7 @@ import { Tarefa } from '../../tarefa.model';
 import { TarefaService } from './../../tarefa.service';
 import { TarefaDetailsStore } from './tarefa-details.store';
 import { Injectable, OnDestroy } from "@angular/core";
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class TarefaDetailsFacade implements OnDestroy {
@@ -12,7 +13,7 @@ export class TarefaDetailsFacade implements OnDestroy {
   state$ = this.store.state$;
   private destroy$ = new Subject<void>();
 
-  constructor(private store: TarefaDetailsStore, private service: TarefaService) { }
+  constructor(private store: TarefaDetailsStore, private service: TarefaService, private toastr: ToastrService) { }
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -29,7 +30,10 @@ export class TarefaDetailsFacade implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: t => this.store.atualizarDto(t),
-        error: () => this.store.setErrorSalvar()
+        error: () => {
+          this.store.setErrorSalvar();
+          this.toastr.error('⚠️ Erro: Não foi possível conectar ao servidor para salvar. Tente novamente.');
+        }
       });
   }
 
