@@ -1,7 +1,7 @@
 import { CustomSyncValidators } from './../../../../provided-in-root/custom-sync-validators';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ImportanciaTarefa } from '../../enums/importancia-tarefa.enum';
-import { Subtarefa, Tag, Tarefa } from '../../tarefa.model';
+import { Subtarefa, Tag, Tarefa } from '../../tarefa.types';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseFormComponent } from 'src/app/shared/base-form/base-form.component';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
@@ -55,9 +55,10 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
 
   criarFormControls(): void {
     this.form = this.fb.group({
-      id: [''],
-      titulo: ['', [Validators.required, Validators.minLength(3)]],
-      anotacoes: [''],
+      // não possui campo id → rota é a fonte da verdade (escolhemos só um lugar para o id para não abrir margem para inconsistência)
+      // maxlength espelha exatamente o que o banco de dados aceita para não gerar erro no back
+      titulo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
+      anotacoes: ['', Validators.maxLength(1000)],
       prazo: ['', Validators.required],
       importancia: [ImportanciaTarefa.Media, Validators.required], // ou pode passar 1, 2 ou 3 direto
       concluida: [false],
@@ -130,7 +131,7 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
     this.subtarefasFormArray.push(this.fb.group({
       id: [subtarefa?.id || ''],
       tarefaId: [this.idRota],
-      titulo: [subtarefa?.titulo || '', [Validators.required, Validators.minLength(3)]],
+      titulo: [subtarefa?.titulo || '', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
       prazo: [subtarefa?.prazo || '', Validators.required],
       concluida: [subtarefa?.concluida || false],
       dataCriacao: [subtarefa?.dataCriacao || new Date()]

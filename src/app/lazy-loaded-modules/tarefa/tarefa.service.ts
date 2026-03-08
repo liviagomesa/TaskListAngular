@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Tarefa } from './tarefa.model';
+import { Tarefa } from './tarefa.types';
 import { filter, forkJoin, map, Observable, of, switchMap } from 'rxjs';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { BaseService } from 'src/app/shared/base-service/base.service';
 import { environment } from 'src/environments/environment';
 
@@ -12,9 +12,9 @@ export class TarefaService extends BaseService<Tarefa> {
 
   endpoint = 'tarefas';
 
-  override create(tarefa: Tarefa): Observable<Tarefa> {
+  override create(formValue: Tarefa): Observable<Tarefa> {
     // Primeiro criamos a tarefa
-    return this.httpClient.post<Tarefa>(this.baseUrl, tarefa).pipe(
+    return this.httpClient.post<Tarefa>(this.baseUrl, formValue).pipe(
 
       // Depois criamos as subtarefas e tags
       switchMap((t: Tarefa) => {
@@ -23,14 +23,14 @@ export class TarefaService extends BaseService<Tarefa> {
         const ops: Observable<any>[] = [];
 
         // Para cada tag do formulário, cria um POST novo
-        (tarefa.tags ?? []).forEach(tag => {
+        (formValue.tags ?? []).forEach(tag => {
           ops.push(
             this.httpClient.post(`${environment.apiUrl}/tags`, { ...tag, id: undefined, tarefaId: t.id })
           );
         });
 
         // Para cada subtarefa do formulário, cria um POST novo
-        (tarefa.subtarefas ?? []).forEach(sub => {
+        (formValue.subtarefas ?? []).forEach(sub => {
           ops.push(
             this.httpClient.post(`${environment.apiUrl}/subtarefas`, { ...sub, id: undefined, tarefaId: t.id })
           );
@@ -48,11 +48,11 @@ export class TarefaService extends BaseService<Tarefa> {
     );
   }
 
-  override update(tarefa: Tarefa, id: number): Observable<Tarefa> {
+  override update(formValue: Tarefa, id: number): Observable<Tarefa> {
 
     // como estamos usando json-server, é necessário excluir tudo e recriar depois
     return this.deleteById(id).pipe(
-      switchMap(() => this.create(tarefa))
+      switchMap(() => this.create(formValue))
     );
 
   }

@@ -1,4 +1,4 @@
-import { Tarefa } from "../../tarefa.model";
+import { Tarefa } from "../../tarefa.types";
 
 export interface TarefaDetailsState {
   dto: Tarefa;

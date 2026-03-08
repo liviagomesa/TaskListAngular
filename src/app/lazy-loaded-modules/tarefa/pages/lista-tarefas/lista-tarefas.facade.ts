@@ -3,7 +3,7 @@ import { ParamsBusca } from 'src/app/provided-in-root/params-busca.model';
 import { ListaTarefasStore } from './lista-tarefas.store';
 import { Injectable, OnDestroy } from "@angular/core";
 import { TarefaService } from '../../tarefa.service';
-import { Tarefa } from '../../tarefa.model';
+import { Tarefa } from '../../tarefa.types';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable() // sem providedIn
@@ -61,6 +61,7 @@ export class ListaTarefasFacade implements OnDestroy {
 
   excluirConcluidas() {
     if (this.store.getConcluidas() === 0) {
+      // opções: success, error, info, warning (amarelo) e show (genérico, definir classe com toastClass)
       this.toastr.info('Nenhuma tarefa concluída para excluir.');
       return;
     }

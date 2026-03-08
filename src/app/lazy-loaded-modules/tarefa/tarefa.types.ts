@@ -1,15 +1,19 @@
 import { ImportanciaTarefa } from "./enums/importancia-tarefa.enum";
 
+// ---------------------------------------------------------------------
+// DTOs
+// ---------------------------------------------------------------------
+
 export interface Tarefa {
-    id: number | null,
-    titulo: string,
-    anotacoes: string | null,
-    concluida: boolean,
-    dataCriacao: Date,
-    prazo: Date | null,
-    importancia: ImportanciaTarefa | null,
-    subtarefas: Subtarefa[] | null,
-    tags: Tag[] | null
+  id: number | null,
+  titulo: string,
+  anotacoes: string | null,
+  concluida: boolean,
+  dataCriacao: Date,
+  prazo: Date | null,
+  importancia: ImportanciaTarefa | null,
+  subtarefas: Subtarefa[] | null,
+  tags: Tag[] | null
 }
 
 export interface Subtarefa {
@@ -26,6 +30,10 @@ export interface Tag {
   tarefaId: number | null,
   nome: string
 }
+
+// ---------------------------------------------------------------------
+// Função de criação de DTO vazio
+// ---------------------------------------------------------------------
 
 export function createEmptyTarefa(): Tarefa {
   return {

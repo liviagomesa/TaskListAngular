@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ListaTarefasState, initialListaTarefasState } from './lista-tarefas.state';
-import { Tarefa } from '../../tarefa.model';
+import { Tarefa } from '../../tarefa.types';
 
 @Injectable()
 export class ListaTarefasStore {

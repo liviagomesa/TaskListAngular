@@ -1,5 +1,5 @@
 import { AbstractControl, FormArray, ValidatorFn } from "@angular/forms";
-import { Tag } from "../lazy-loaded-modules/tarefa/tarefa.model";
+import { Tag } from "../lazy-loaded-modules/tarefa/tarefa.types";
 
 export class CustomSyncValidators {
 

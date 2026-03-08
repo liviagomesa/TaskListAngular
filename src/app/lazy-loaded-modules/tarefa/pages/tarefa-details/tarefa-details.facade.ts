@@ -1,5 +1,5 @@
 import { Subject, takeUntil } from 'rxjs';
-import { Tarefa } from '../../tarefa.model';
+import { Tarefa } from '../../tarefa.types';
 import { TarefaService } from './../../tarefa.service';
 import { TarefaDetailsStore } from './tarefa-details.store';
 import { Injectable, OnDestroy } from "@angular/core";

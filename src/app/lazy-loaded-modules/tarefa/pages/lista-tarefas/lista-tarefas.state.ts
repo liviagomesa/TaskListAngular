@@ -1,4 +1,4 @@
-import { Tarefa } from "../../tarefa.model";
+import { Tarefa } from "../../tarefa.types";
 
 /** A interface que define a forma do estado da tela de listagem de tarefas */
 export interface ListaTarefasState {

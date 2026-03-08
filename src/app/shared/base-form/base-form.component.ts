@@ -11,7 +11,7 @@ import { BaseFormState } from './base-form.state';
   template: '<div></div>',
   providers: [BaseFormStore]
 })
-export abstract class BaseFormComponent<T extends { id?: number | null }> implements OnInit, OnDestroy {
+export abstract class BaseFormComponent<D extends { id?: number | null }> implements OnInit, OnDestroy {
 
   // ---------------------------------------------------------------------
   // FIELDS AND ACCESSORS
@@ -19,7 +19,7 @@ export abstract class BaseFormComponent<T extends { id?: number | null }> implem
 
   form!: FormGroup;
   destroy$ = new Subject<void>;
-  state$!: Observable<BaseFormState<T> | null>;
+  state$!: Observable<BaseFormState<D> | null>;
 
   get idRota(): number {
     return Number(this.route.snapshot.paramMap.get('id'));
@@ -37,7 +37,7 @@ export abstract class BaseFormComponent<T extends { id?: number | null }> implem
     protected router: Router,
     protected route: ActivatedRoute,
     protected fb: FormBuilder,
-    protected facade: BaseFormFacade<T>
+    protected facade: BaseFormFacade<D>
   ) {
     this.state$ = facade.state$;
   }
@@ -64,7 +64,7 @@ export abstract class BaseFormComponent<T extends { id?: number | null }> implem
     .pipe(takeUntil(this.destroy$))
     .subscribe(([paramMap, data]) => {
       const id = Number(paramMap.get('id'));
-      const dto = data['dto'] as T | undefined;
+      const dto = data['dto'] as D | undefined;
       this.facade.inicializarDados(dto, id);
     });
   }
@@ -98,7 +98,7 @@ export abstract class BaseFormComponent<T extends { id?: number | null }> implem
   /**
    * Neste método, criamos os controles dos FormArrays de `form`.
    */
-  protected criarEPreencherFormArraysControls(dto: T): void {
+  protected criarEPreencherFormArraysControls(dto: D): void {
     // implementado pelas classes filhas se necessário
   }
 

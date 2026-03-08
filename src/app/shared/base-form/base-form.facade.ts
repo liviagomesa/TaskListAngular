@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { delay, Subject, takeUntil } from 'rxjs';
+import { delay, Observable, Subject, takeUntil } from 'rxjs';
 import { BaseService } from '../base-service/base.service';
 import { BaseFormStore } from './base-form.store';
 import { ToastrService } from 'ngx-toastr';
@@ -34,9 +34,13 @@ export abstract class BaseFormFacade<D extends { id?: number | null }> implement
     this.store.inicializarDados(dto, id);
   }
 
-  save(formValue: any) {
+  save(formValue: D) {
     this.store.setSalvando(formValue);
-    this.service.save(formValue, this.store.getId())
+    let dto$: Observable<D>;
+    if (this.store.getId()) dto$ = this.service.update(formValue, this.store.getId());
+    else dto$ = this.service.create(formValue);
+
+    dto$
       // take(1) não precisa porque o HttpClient já completa automaticamente após a 1ª emissão
       // takeUntil é necessário para o caso do componente ser destruído antes da resposta chegar: o Angular tentaria atualizar uma store já destruída
       .pipe(takeUntil(this.destroy$)/*, take(1)*/, delay(2000))

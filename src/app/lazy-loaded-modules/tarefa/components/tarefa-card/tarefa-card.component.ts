@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ImportanciaTarefa } from '../../enums/importancia-tarefa.enum';
-import { Tarefa } from '../../tarefa.model';
+import { Tarefa } from '../../tarefa.types';
 
 @Component({
   selector: 'app-tarefa-card',

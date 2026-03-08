@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export abstract class BaseService<E extends { id?: number | null }> {
+export abstract class BaseService<D extends { id?: number | null }> {
 
   readonly abstract endpoint: string;
 
@@ -17,7 +17,7 @@ export abstract class BaseService<E extends { id?: number | null }> {
 
   constructor(protected httpClient: HttpClient) { }
 
-  findAll(options?: ParamsBusca): Observable<E[]> {
+  findAll(options?: ParamsBusca): Observable<D[]> {
     let params = new HttpParams();
 
     if (options?.page) {
@@ -41,26 +41,21 @@ export abstract class BaseService<E extends { id?: number | null }> {
       }
     }
 
-    return this.httpClient.get<E[]>(this.baseUrl, { params }).pipe(delay(2000));
-  }
-
-  save(dto: E, id: number | null): Observable<E> {
-    if (id) return this.update(dto, id);
-    return this.create(dto);
+    return this.httpClient.get<D[]>(this.baseUrl, { params }).pipe(delay(2000));
   }
 
   /**
    * Cria uma entidade sem criar suas entidades filhas.
    */
-  create(dto: E): Observable<E> {
-    return this.httpClient.post<E>(this.baseUrl, dto);
+  create(formValue: D): Observable<D> {
+    return this.httpClient.post<D>(this.baseUrl, formValue);
   }
 
   /**
    * Atualiza uma entidade sem atualizar suas entidades filhas.
    */
-  update(dto: E, id: number): Observable<E> {
-    return this.httpClient.put<E>(`${this.baseUrl}/${id}`, dto);
+  update(formValue: D, id: number): Observable<D> {
+    return this.httpClient.put<D>(`${this.baseUrl}/${id}`, formValue);
   }
 
   /**
@@ -73,20 +68,20 @@ export abstract class BaseService<E extends { id?: number | null }> {
   /**
    * Encontra uma entidade pelo id sem as entidades filhas.
    */
-  findById(id: number): Observable<E> {
-    return this.httpClient.get<E>(`${this.baseUrl}/${id}`);
+  findById(id: number): Observable<D> {
+    return this.httpClient.get<D>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Esta função é usada só quando necessário "provar" para o TS que um objeto é uma instância de E
    * A sintaxe do seu retorno significa: "retorna boolean, e, se for true, sabe-se que x é E"
    * */
-  protected isDto(x: E | undefined): x is E {
+  protected isDto(x: D | undefined): x is D {
     return !!x; // se obj for null/undefined, ! nega (transforma em true) e !! transforma em false
   }
 
   countAll(): Observable<number> {
-    return this.httpClient.get<E[]>(this.baseUrl, {
+    return this.httpClient.get<D[]>(this.baseUrl, {
       params: new HttpParams().set('_per_page', '1').set('_page', 1),
       observe: 'response'
     }).pipe(
