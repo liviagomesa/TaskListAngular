@@ -55,7 +55,7 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> {
       titulo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
       anotacoes: ['', Validators.maxLength(1000)],
       prazo: ['', Validators.required],
-      importancia: [ImportanciaTarefa.Media, Validators.required], // ou pode passar 1, 2 ou 3 direto
+      importancia: [null, Validators.required],
       concluida: [false],
       subtarefas: this.fb.array([]),
       newTag: ['', [Validators.maxLength(30), Validators.pattern(/^[\w\s-]+$/)]],

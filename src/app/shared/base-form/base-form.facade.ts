@@ -3,6 +3,7 @@ import { delay, Observable, Subject, takeUntil } from 'rxjs';
 import { BaseService } from '../base-service/base.service';
 import { BaseFormStore } from './base-form.store';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Injectable()
 export abstract class BaseFormFacade<D extends { id?: number | null }> implements OnDestroy {
@@ -18,7 +19,12 @@ export abstract class BaseFormFacade<D extends { id?: number | null }> implement
   // CONSTRUTOR E LIFECYCLE HOOKS (ANGULAR)
   // ---------------------------------------------------------------------
 
-  constructor(private store: BaseFormStore<D>, private service: BaseService<D>, private toastr: ToastrService) { }
+  constructor(
+    private store: BaseFormStore<D>,
+    private service: BaseService<D>,
+    private toastr: ToastrService,
+    private router: Router
+  ) { }
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -37,7 +43,8 @@ export abstract class BaseFormFacade<D extends { id?: number | null }> implement
   save(formValue: D) {
     this.store.setSalvando(formValue);
     let dto$: Observable<D>;
-    if (this.store.getId()) dto$ = this.service.update(formValue, this.store.getId());
+    const id = this.store.getId();
+    if (id) dto$ = this.service.update(formValue, id);
     else dto$ = this.service.create(formValue);
 
     dto$
@@ -45,9 +52,10 @@ export abstract class BaseFormFacade<D extends { id?: number | null }> implement
       // takeUntil é necessário para o caso do componente ser destruído antes da resposta chegar: o Angular tentaria atualizar uma store já destruída
       .pipe(takeUntil(this.destroy$)/*, take(1)*/, delay(2000))
       .subscribe({
-        next: t => {
-          this.store.atualizarDtoFromApi(t);
+        next: d => {
+          this.store.atualizarDtoFromApi(d);
           this.toastr.success('Salvo com sucesso!');
+          if (!id) this.router.navigate(['/tarefas', d.id, 'edit']);
         },
         error: () => {
           this.store.setErrorSalvar();

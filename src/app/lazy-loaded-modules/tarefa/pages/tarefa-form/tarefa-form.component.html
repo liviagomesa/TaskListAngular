@@ -19,8 +19,8 @@
         <div class="col-12 col-md-6 mb-3">
           <label for="importancia" class="form-label">Importância</label>
           <select class="form-select" id="importancia" [ngClass]="getValidationClass('importancia')" formControlName="importancia">
-            <option selected disabled [ngValue]="null">Selecione...</option>
-            <option [value]="importancia" *ngFor="let importancia of opcoesImportancia">{{ importancia | importanciaTarefa }}</option>
+            <option disabled [ngValue]="null">Selecione...</option>
+            <option [ngValue]="importancia" *ngFor="let importancia of opcoesImportancia">{{ importancia | importanciaTarefa }}</option>
           </select>
           <app-error-msg [control]="$any(form.get('importancia'))" label="Importância"></app-error-msg>
         </div>

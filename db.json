@@ -1,6 +1,33 @@
 {
   "tarefas": [
     {
+      "id": 1,
+      "titulo": "Limpar quintal",
+      "anotacoes": "A limpeza será feita antes de qualquer coisa pra garantir que a sujeira não se espalhe pela casa.",
+      "prazo": "2025-11-20",
+      "importancia": 3,
+      "concluida": false,
+      "subtarefas": [
+        {
+          "id": 1,
+          "tarefaId": 1,
+          "titulo": "Teste",
+          "prazo": "2026-03-01",
+          "concluida": true,
+          "dataCriacao": "2026-03-01T22:48:21.467Z"
+        }
+      ],
+      "newTag": "",
+      "tags": [
+        {
+          "id": 10,
+          "tarefaId": 1,
+          "nome": "teste"
+        }
+      ],
+      "dataCriacao": "2025-10-01"
+    },
+    {
       "id": 2,
       "titulo": "Ir ao médico",
       "anotacoes": "Endocrinologista ou clínico geral, o que conseguir horário primeiro.",
@@ -34,31 +61,16 @@
       "dataCriacao": "2025-10-02"
     },
     {
-      "id": 1,
-      "titulo": "Limpar quintal",
-      "anotacoes": "A limpeza será feita antes de qualquer coisa pra garantir que a sujeira não se espalhe pela casa.",
-      "prazo": "2025-11-20",
-      "importancia": 3,
+      "titulo": "teste",
+      "anotacoes": null,
+      "prazo": "2026-03-08",
+      "importancia": 2,
       "concluida": false,
-      "subtarefas": [
-        {
-          "id": 1,
-          "tarefaId": 1,
-          "titulo": "Teste",
-          "prazo": "2026-03-01",
-          "concluida": true,
-          "dataCriacao": "2026-03-01T22:48:21.467Z"
-        }
-      ],
+      "subtarefas": [],
       "newTag": "",
-      "tags": [
-        {
-          "id": 10,
-          "tarefaId": 1,
-          "nome": "teste"
-        }
-      ],
-      "dataCriacao": "2025-10-01"
+      "tags": [],
+      "dataCriacao": "2026-03-08T17:08:09.338Z",
+      "id": 3
     }
   ],
   "subtarefas": [
@@ -73,29 +85,29 @@
   ],
   "tags": [
     {
+      "tarefaId": 1,
+      "nome": "teste",
+      "id": 15
+    },
+    {
       "tarefaId": 2,
       "nome": "Tag1",
-      "id": 11
+      "id": 16
     },
     {
       "tarefaId": 2,
       "nome": "Tag2",
-      "id": 12
+      "id": 17
     },
     {
       "tarefaId": 2,
       "nome": "Tag3",
-      "id": 13
+      "id": 18
     },
     {
       "tarefaId": 2,
       "nome": "teste",
-      "id": 14
-    },
-    {
-      "tarefaId": 1,
-      "nome": "teste",
-      "id": 15
+      "id": 19
     }
   ]
 }

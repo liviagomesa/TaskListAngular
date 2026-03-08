@@ -65,22 +65,24 @@ export class ListaTarefasFacade implements OnDestroy {
       this.toastr.info('Nenhuma tarefa concluída para excluir.');
       return;
     }
-    this.store.setExcluindoConcluidas();
-    this.service.excluirConcluidas()
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap(() => this.findDadosServidor())
-      ).subscribe({
-        next: dadosServidor => {
-          this.store.atualizarDadosServidor(dadosServidor.tarefas, dadosServidor.total, dadosServidor.concluidas);
-          this.toastr.success('Tarefas excluídas com sucesso!');
-        },
-        error: () => {
-          this.store.setErrorExcluirConcluidas();
-          this.store.setErrorDados();
-          this.toastr.error('Não foi possível excluir. Tente novamente.');
-        }
-      });
+    if (confirm("Tem certeza que deseja excluir as tarefas concluídas? Essa ação não pode ser desfeita.")) {
+      this.store.setExcluindoConcluidas();
+      this.service.excluirConcluidas()
+        .pipe(
+          takeUntil(this.destroy$),
+          switchMap(() => this.findDadosServidor())
+        ).subscribe({
+          next: dadosServidor => {
+            this.store.atualizarDadosServidor(dadosServidor.tarefas, dadosServidor.total, dadosServidor.concluidas);
+            this.toastr.success('Tarefas excluídas com sucesso!');
+          },
+          error: () => {
+            this.store.setErrorExcluirConcluidas();
+            this.store.setErrorDados();
+            this.toastr.error('Não foi possível excluir. Tente novamente.');
+          }
+        });
+    }
   }
 
   toggleConclusao(id: number) {

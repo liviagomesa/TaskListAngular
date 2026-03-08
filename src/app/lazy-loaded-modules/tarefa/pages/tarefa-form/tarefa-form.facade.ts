@@ -4,6 +4,7 @@ import { createEmptyTarefa, Tarefa } from "../../tarefa.types";
 import { BaseFormStore } from "src/app/shared/base-form/base-form.store";
 import { TarefaService } from "../../tarefa.service";
 import { ToastrService } from "ngx-toastr";
+import { Router } from "@angular/router";
 
 @Injectable() // sem providedIn
 export class TarefaFormFacade extends BaseFormFacade<Tarefa> {
@@ -12,8 +13,13 @@ export class TarefaFormFacade extends BaseFormFacade<Tarefa> {
     return createEmptyTarefa();
   }
 
-  constructor(store: BaseFormStore<Tarefa>, service: TarefaService, toastr: ToastrService) {
-    super(store, service, toastr);
+  constructor(
+    store: BaseFormStore<Tarefa>,
+    service: TarefaService,
+    toastr: ToastrService,
+    router: Router
+  ) {
+    super(store, service, toastr, router);
   }
 
 }
