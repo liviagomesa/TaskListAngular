@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ImportanciaTarefa } from '../../enums/importancia-tarefa.enum';
 import { Tarefa } from '../../tarefa.types';
 
@@ -7,29 +7,23 @@ import { Tarefa } from '../../tarefa.types';
   templateUrl: './tarefa-card.component.html',
   styleUrls: ['./tarefa-card.component.scss']
 })
-export class TarefaCardComponent implements OnInit {
+export class TarefaCardComponent {
 
   @Input() tarefa!: Tarefa;
   hovered: boolean = false;
-  flagColor: string = '';
   @Output() excluida = new EventEmitter<void>();
   @Output() concluida = new EventEmitter<void>();
 
-  constructor() { }
-
-  ngOnInit(): void {
+  get flagColor() {
     switch (this.tarefa.importancia) {
-      case (ImportanciaTarefa.Alta):
-        this.flagColor = 'text-danger';
-        break;
-      case (ImportanciaTarefa.Media):
-        this.flagColor = 'text-warning';
-        break;
-      case (ImportanciaTarefa.Baixa):
-        this.flagColor = 'text-success';
-        break;
+      case (ImportanciaTarefa.Alta): return 'text-danger';
+      case (ImportanciaTarefa.Media): return 'text-warning';
+      case (ImportanciaTarefa.Baixa): return 'text-success';
+      default: return '';
     }
   }
+
+  constructor() { }
 
   protected excluirTarefa(): void {
     if (confirm("Tem certeza que deseja excluir esta tarefa? Essa ação não pode ser desfeita.")) {

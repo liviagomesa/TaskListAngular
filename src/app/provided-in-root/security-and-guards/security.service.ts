@@ -1,5 +1,6 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
 export class SecurityService {
 
   private usuarioAutenticado: boolean = false;
-  public logadoEmitter: EventEmitter<boolean> = new EventEmitter();
+  public logadoEmitter: Subject<boolean> = new Subject();
 
   constructor(private router: Router) { }
 
@@ -20,7 +21,7 @@ export class SecurityService {
       this.usuarioAutenticado = false;
       alert('Credenciais inválidas');
     }
-    this.logadoEmitter.emit(this.usuarioAutenticado);
+    this.logadoEmitter.next(this.usuarioAutenticado);
   }
 
   public isUsuarioAutenticado(): boolean {

@@ -3,8 +3,6 @@ import { Tag } from "../lazy-loaded-modules/tarefa/tarefa.types";
 
 export class CustomSyncValidators {
 
-  constructor() { }
-
   static maxArrayLength(max: number): ValidatorFn {
     return (control: AbstractControl) => {
       const array = control as FormArray;

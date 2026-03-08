@@ -15,7 +15,7 @@ import { BaseFormStore } from 'src/app/shared/base-form/base-form.store';
   providers: [TarefaFormFacade, BaseFormStore]
 })
 // caso rota de edição, antes de carregar este componente, o resolver busca a tarefa do id fornecido e salva em activatedRoute.data (que é um observable)
-export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements OnInit, OnDestroy {
+export class TarefaFormComponent extends BaseFormComponent<Tarefa> {
 
   // ---------------------------------------------------------------------
   // PROPRIEDADES (FIELDS) E GETTERS (ACCESSORS)
@@ -42,11 +42,6 @@ export class TarefaFormComponent extends BaseFormComponent<Tarefa> implements On
     override facade: TarefaFormFacade,
   ) {
     super(router, route, fb, facade);
-  }
-
-  // obs.: se o id for inválido, este método nem chegará a ser executado, pois o resolver roda antes e encaminha para not-found
-  override ngOnInit(): void {
-    super.ngOnInit();
   }
 
   // ---------------------------------------------------------------------

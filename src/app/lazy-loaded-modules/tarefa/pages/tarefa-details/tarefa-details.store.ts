@@ -29,10 +29,6 @@ export class TarefaDetailsStore {
     this._state$.next({ ...this._state$.value!, dto, salvandoConclusao: false, errorSalvar: false });
   }
 
-  atualizarId(id: number) {
-    this._state$.next({ ...this._state$.value!, id, salvandoConclusao: false, errorSalvar: false });
-  }
-
   setErrorSalvar() {
     this._state$.next({ ...this._state$.value!, salvandoConclusao: false, errorSalvar: true });
   }

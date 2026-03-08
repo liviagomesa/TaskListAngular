@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ListaTarefasFacade } from './lista-tarefas.facade';
 import { ListaTarefasStore } from './lista-tarefas.store';
@@ -74,7 +74,14 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
    * mas consigo usar setValue no ts
    */
   reagirAoStateNoForm(): void {
-    this.state$.pipe(takeUntil(this.destroy$)).subscribe(state => {
+    this.state$.pipe(
+      // Só deixa passar se sort OU filtrarConcluidas mudaram de facto
+      distinctUntilChanged((prev, curr) =>
+        prev.sort === curr.sort &&
+        prev.filtrarConcluidas === curr.filtrarConcluidas
+      ),
+      takeUntil(this.destroy$)
+    ).subscribe(state => {
       this.filterSortForm.get('sort')?.setValue(state.sort);
       this.filterSortForm.get('concluida')?.setValue(state.filtrarConcluidas);
     });
@@ -119,11 +126,11 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
     this.facade.deleteById(id);
   }
 
-  proximaPagina() {
+  incrementarPagina(valorASomar: number) {
     this.router.navigate([], {
       queryParamsHandling: 'merge',
       queryParams: {
-        page: (Number(this.route.snapshot.queryParamMap.get('page')) ?? 1) + 1
+        page: Number(this.route.snapshot.queryParamMap.get('page')) + valorASomar
       }
     });
   }
