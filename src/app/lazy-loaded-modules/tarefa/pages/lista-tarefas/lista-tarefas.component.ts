@@ -75,7 +75,7 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
    */
   reagirAoStateNoForm(): void {
     this.state$.pipe(
-      // Só deixa passar se sort OU filtrarConcluidas mudaram de facto
+      // Só deixa passar se sort OU filtrarConcluidas mudaram de fato
       distinctUntilChanged((prev, curr) =>
         prev.sort === curr.sort &&
         prev.filtrarConcluidas === curr.filtrarConcluidas

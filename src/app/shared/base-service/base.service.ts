@@ -54,8 +54,8 @@ export abstract class BaseService<D extends { id?: number | null }> {
   /**
    * Atualiza uma entidade sem atualizar suas entidades filhas.
    */
-  update(formValue: D, id: number): Observable<D> {
-    return this.http.put<D>(`${this.baseUrl}/${id}`, formValue);
+  update(formValue: Partial<D>, id: number): Observable<D> {
+    return this.http.patch<D>(`${this.baseUrl}/${id}`, formValue);
   }
 
   /**
@@ -73,8 +73,8 @@ export abstract class BaseService<D extends { id?: number | null }> {
   }
 
   /**
-   * Esta função é usada só quando necessário "provar" para o TS que um objeto é uma instância de E
-   * A sintaxe do seu retorno significa: "retorna boolean, e, se for true, sabe-se que x é E"
+   * Esta função é usada só quando necessário "provar" para o TS que um objeto é uma instância de D
+   * A sintaxe do seu retorno significa: "retorna boolean, e, se for true, sabe-se que x é D"
    * */
   protected isDto(x: D | undefined): x is D {
     return !!x; // se obj for null/undefined, ! nega (transforma em true) e !! transforma em false

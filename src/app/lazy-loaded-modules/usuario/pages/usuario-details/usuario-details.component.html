@@ -1,1 +1,79 @@
-<p>usuario-details works!</p>
+<div class="container py-4" style="max-width: 640px;">
+
+  <!-- PERFIL -->
+  <section>
+    <h4 class="mb-4">Perfil</h4>
+
+    <form [formGroup]="perfilForm" (ngSubmit)="salvarPerfil()">
+
+      <!-- Foto -->
+      <div class="mb-4 d-flex align-items-center gap-3">
+        <img
+          [src]="(photoUrl$ | async) ?? 'https://github.com/mdo.png'"
+          alt="foto de perfil"
+          width="72" height="72"
+          class="rounded-circle object-fit-cover border">
+        <div>
+          <label class="form-label mb-1">Foto de perfil</label>
+          <input
+            type="file"
+            class="form-control form-control-sm"
+            accept="image/*"
+            (change)="onFotoChange($event)">
+        </div>
+      </div>
+
+      <!-- Nome -->
+      <div class="mb-3">
+        <app-input-field formControlName="nome" label="Nome completo"></app-input-field>
+      </div>
+
+      <!-- Bio -->
+      <div class="mb-4">
+        <label class="form-label">Bio</label>
+        <textarea
+          class="form-control"
+          [class.is-invalid]="perfilForm.get('bio')?.invalid && perfilForm.get('bio')?.touched"
+          formControlName="bio"
+          rows="3">
+        </textarea>
+        <app-error-msg [control]="perfilForm.get('bio')" label="Bio"></app-error-msg>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="salvandoPerfil$ | async">
+        <span *ngIf="salvandoPerfil$ | async" class="spinner-border spinner-border-sm me-1"></span>
+        {{ (salvandoPerfil$ | async) ? 'Salvando...' : 'Salvar' }}
+      </button>
+
+    </form>
+  </section>
+
+  <hr class="my-5">
+
+  <!-- ALTERAR SENHA -->
+  <section>
+    <h4 class="mb-4">Alterar senha</h4>
+
+    <form [formGroup]="senhaForm" (ngSubmit)="salvarSenha()">
+
+      <div class="mb-3">
+        <app-input-field formControlName="senhaAtual" label="Senha atual" type="password"></app-input-field>
+      </div>
+
+      <div class="mb-3">
+        <app-input-field formControlName="novaSenha" label="Nova senha" type="password"></app-input-field>
+      </div>
+
+      <div class="mb-3">
+        <app-input-field formControlName="confirmarNovaSenha" label="Confirmar nova senha" type="password"></app-input-field>
+      </div>
+
+      <button type="submit" class="btn btn-outline-primary" [disabled]="salvandoSenha$ | async">
+        <span *ngIf="salvandoSenha$ | async" class="spinner-border spinner-border-sm me-1"></span>
+        {{ (salvandoSenha$ | async) ? 'Alterando...' : 'Alterar senha' }}
+      </button>
+
+    </form>
+  </section>
+
+</div>

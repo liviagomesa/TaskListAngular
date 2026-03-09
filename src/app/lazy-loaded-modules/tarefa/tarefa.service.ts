@@ -79,6 +79,7 @@ export class TarefaService extends BaseService<Tarefa> {
     return this.http.get<Tarefa>(`${this.baseUrl}/${id}?_embed=subtarefas&_embed=tags`);
   }
 
+  // TODO: Alterar para PATCH, enviando somente o campo alterado
   toggleConclusaoById(id: number): Observable<Tarefa> {
     return this.findById(id).pipe(
       filter(obj => this.isDto(obj)), // garante que não prossiga se for undefined

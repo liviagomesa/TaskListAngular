@@ -4,6 +4,9 @@ export { Cidade, Estado };
 
 export interface Usuario {
   id?: number;
+  nome: string;
+  bio?: string;
+  telefone?: string;
   email: string;
   password: string;
   endereco?: Endereco;
@@ -17,4 +20,10 @@ export interface Endereco {
   bairro: string;
   cidade: Cidade;
   estado: Estado;
+}
+
+export interface AlterarSenhaRequest {
+  senhaAtual: string;
+  novaSenha: string;
+  confirmarNovaSenha: string;
 }

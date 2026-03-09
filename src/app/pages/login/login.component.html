@@ -6,14 +6,14 @@
       </div>
       <div class="modal-body p-5 pt-0">
         <div class="form-floating mb-3">
-          <input type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com" [(ngModel)]="usuario.email" (keyup.enter)="fazerLogin()">
+          <input type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com" [(ngModel)]="usuario.email" (keyup.enter)="login()">
           <label for="floatingInput">E-mail</label>
         </div>
         <div class="form-floating mb-3">
-          <input type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password" [(ngModel)]="usuario.password" (keyup.enter)="fazerLogin()">
+          <input type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password" [(ngModel)]="usuario.password" (keyup.enter)="login()">
           <label for="floatingPassword">Senha</label>
         </div>
-        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" (click)="fazerLogin()" [disabled]="loading$ | async">
+        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" (click)="login()" [disabled]="loading$ | async">
           <span *ngIf="loading$ | async" class="spinner-border spinner-border-sm me-1"></span>
           {{ (loading$ | async) ? 'Entrando...' : 'Entrar' }}
         </button>

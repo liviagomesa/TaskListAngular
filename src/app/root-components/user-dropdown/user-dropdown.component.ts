@@ -8,6 +8,8 @@ import { SecurityFacade } from 'src/app/core/security-and-guards/security.facade
 })
 export class UserDropdownComponent {
 
+  photoUrl$ = this.facade.photoUrl$;
+
   constructor(private facade: SecurityFacade) { }
 
   logout() {

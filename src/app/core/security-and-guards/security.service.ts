@@ -14,7 +14,7 @@ export class SecurityService {
 
   constructor(private http: HttpClient) { }
 
-  public fazerLogin(formValue: Usuario): Observable<{ accessToken: string }> {
+  public login(formValue: Partial<Usuario>): Observable<{ accessToken: string }> {
     return this.http.post<{ accessToken: string }>(this.loginUrl, formValue);
   }
 

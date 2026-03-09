@@ -1,132 +1,181 @@
 {
   "tarefas": [
     {
-      "id": 1,
-      "userId": 2,
-      "titulo": "Limpar quintal",
-      "anotacoes": "A limpeza será feita antes de qualquer coisa pra garantir que a sujeira não se espalhe pela casa.",
-      "prazo": "2025-11-20",
-      "importancia": 3,
-      "concluida": false,
-      "subtarefas": [
-        {
-          "id": 1,
-          "tarefaId": 1,
-          "titulo": "Teste",
-          "prazo": "2026-03-01",
-          "concluida": true,
-          "dataCriacao": "2026-03-01T22:48:21.467Z"
-        }
-      ],
-      "newTag": "",
-      "tags": [
-        {
-          "id": 10,
-          "tarefaId": 1,
-          "nome": "teste"
-        }
-      ],
-      "dataCriacao": "2025-10-01"
-    },
-    {
-      "id": 2,
-      "userId": 1,
-      "titulo": "Ir ao médico",
-      "anotacoes": "Endocrinologista ou clínico geral, o que conseguir horário primeiro.",
-      "prazo": "2025-11-13",
+      "titulo": "Ler documentação sobre TypeScript generics",
+      "anotacoes": null,
+      "prazo": "2026-03-01",
       "importancia": 1,
       "concluida": false,
       "subtarefas": [],
       "newTag": "",
       "tags": [
         {
+          "id": null,
+          "tarefaId": 1,
+          "nome": "estudo"
+        }
+      ],
+      "dataCriacao": "2026-03-09T17:46:10.583Z",
+      "id": 1
+    },
+    {
+      "titulo": "Cuidar da casa",
+      "anotacoes": null,
+      "prazo": "2026-03-10",
+      "importancia": 2,
+      "concluida": false,
+      "subtarefas": [
+        {
+          "id": 1,
+          "tarefaId": 3,
+          "titulo": "Lavar roupa",
+          "prazo": "2026-03-03",
+          "concluida": true,
+          "dataCriacao": "2026-03-09T17:50:53.175Z"
+        },
+        {
+          "id": 2,
+          "tarefaId": 3,
+          "titulo": "Limpar cozinha",
+          "prazo": "2026-03-04",
+          "concluida": false,
+          "dataCriacao": "2026-03-09T17:50:53.223Z"
+        },
+        {
           "id": 3,
-          "tarefaId": 2,
-          "nome": "Tag1"
+          "tarefaId": 3,
+          "titulo": "Tirar lixo",
+          "prazo": "2026-03-05",
+          "concluida": false,
+          "dataCriacao": "2026-03-09T17:51:05.967Z"
         },
         {
           "id": 4,
-          "tarefaId": 2,
-          "nome": "Tag2"
-        },
-        {
-          "id": 5,
-          "tarefaId": 2,
-          "nome": "Tag3"
-        },
-        {
-          "id": null,
-          "tarefaId": null,
-          "nome": "teste"
+          "tarefaId": 3,
+          "titulo": "Organizar mesa de trabalho",
+          "prazo": "2026-03-06",
+          "concluida": false,
+          "dataCriacao": "2026-03-09T17:51:06.343Z"
         }
       ],
-      "dataCriacao": "2025-10-02"
+      "newTag": "",
+      "tags": [
+        {
+          "id": null,
+          "tarefaId": 3,
+          "nome": "casa"
+        }
+      ],
+      "dataCriacao": "2026-03-09T17:50:31.700Z",
+      "id": 5
     },
     {
-      "titulo": "teste",
-      "userId": 1,
+      "titulo": "Fazer compras no supermercado",
       "anotacoes": null,
-      "prazo": "2026-03-08",
+      "prazo": "2026-02-18",
       "importancia": 2,
       "concluida": false,
       "subtarefas": [],
       "newTag": "",
-      "tags": [],
-      "dataCriacao": "2026-03-08T17:08:09.338Z",
-      "id": 3
+      "tags": [
+        {
+          "id": 2,
+          "tarefaId": 4,
+          "nome": "casa"
+        },
+        {
+          "id": null,
+          "tarefaId": 4,
+          "nome": "pessoal"
+        }
+      ],
+      "dataCriacao": "2026-03-09T17:49:16.292Z",
+      "id": 6
+    },
+    {
+      "titulo": "Marcar consulta médica",
+      "anotacoes": null,
+      "prazo": "2026-03-10",
+      "importancia": 3,
+      "concluida": true,
+      "subtarefas": [],
+      "newTag": "",
+      "tags": [
+        {
+          "id": null,
+          "tarefaId": 7,
+          "nome": "pessoal"
+        }
+      ],
+      "dataCriacao": "2026-03-09T17:52:55.675Z",
+      "id": 7
     }
   ],
   "subtarefas": [
     {
-      "tarefaId": 1,
-      "titulo": "Teste",
-      "prazo": "2026-03-01",
+      "tarefaId": 5,
+      "titulo": "Lavar roupa",
+      "prazo": "2026-03-03",
       "concluida": true,
-      "dataCriacao": "2026-03-01T22:48:21.467Z",
+      "dataCriacao": "2026-03-09T17:50:53.175Z",
       "id": 1
+    },
+    {
+      "tarefaId": 5,
+      "titulo": "Limpar cozinha",
+      "prazo": "2026-03-04",
+      "concluida": false,
+      "dataCriacao": "2026-03-09T17:50:53.223Z",
+      "id": 2
+    },
+    {
+      "tarefaId": 5,
+      "titulo": "Tirar lixo",
+      "prazo": "2026-03-05",
+      "concluida": false,
+      "dataCriacao": "2026-03-09T17:51:05.967Z",
+      "id": 3
+    },
+    {
+      "tarefaId": 5,
+      "titulo": "Organizar mesa de trabalho",
+      "prazo": "2026-03-06",
+      "concluida": false,
+      "dataCriacao": "2026-03-09T17:51:06.343Z",
+      "id": 4
     }
   ],
   "tags": [
     {
       "tarefaId": 1,
-      "nome": "teste",
-      "id": 15
+      "nome": "estudo",
+      "id": 1
     },
     {
-      "tarefaId": 2,
-      "nome": "Tag1",
-      "id": 16
+      "tarefaId": 5,
+      "nome": "casa",
+      "id": 3
     },
     {
-      "tarefaId": 2,
-      "nome": "Tag2",
-      "id": 17
+      "tarefaId": 6,
+      "nome": "casa",
+      "id": 4
     },
     {
-      "tarefaId": 2,
-      "nome": "Tag3",
-      "id": 18
+      "tarefaId": 6,
+      "nome": "pessoal",
+      "id": 5
     },
     {
-      "tarefaId": 2,
-      "nome": "teste",
-      "id": 19
+      "tarefaId": 7,
+      "nome": "pessoal",
+      "id": 6
     }
   ],
   "users": [
     {
-      "email": "usuario@email.com",
-      "password": "$2a$10$k/xfGe2jN0NSXcslRViapORp2sSeshOFrcYmdIRW3ru.MINpwvxxG",
-      "id": 1
-    },
-    {
-      "email": "usuario2@email.com",
-      "password": "$2a$10$lAfQepydGaPp1QCX6Faai.aRSFfv1iEJMCa849duGQdUG.WLXcZH.",
-      "id": 2
-    },
-    {
       "email": "marina.duarte@example.com",
-      "password": "$2a$10$Oc.5tpIOcp2DtbOG0YQzdOVTqlGlI0mhbrN/6nURHm4AP5kU5Dds6",
+      "password": "$2a$10$G/YdxXliMrzdlILblsrHMOJPCJGxGUfpj0rGWimm58BTrTOkM.STW",
       "nome": "Marina Duarte",
       "telefone": "27999999999",
       "emailConfirm": "marina.duarte@example.com",
@@ -147,7 +196,34 @@
           "Estado": "8"
         }
       },
-      "id": 3
+      "id": 3,
+      "bio": "Meu perfil."
+    },
+    {
+      "email": "lucas.ferreira@example.com",
+      "password": "$2a$10$4V.7RonYBU1/ZxE.SFLvAekYEAeGNtWt6WWMnQMf8JeNltU8UT1Gu",
+      "nome": "Lucas Ferreira Coelho",
+      "telefone": "11987654321",
+      "emailConfirm": "lucas.ferreira@example.com",
+      "endereco": {
+        "cep": "01310100",
+        "logradouro": "Avenida Paulista",
+        "numero": "1578",
+        "complemento": "Sala 1204",
+        "bairro": "Bela Vista",
+        "estado": {
+          "id": "26",
+          "sigla": "SP",
+          "nome": "São Paulo"
+        },
+        "cidade": {
+          "ID": "5270",
+          "Nome": "São Paulo",
+          "Estado": "26"
+        }
+      },
+      "id": 4,
+      "bio": ""
     }
   ]
 }

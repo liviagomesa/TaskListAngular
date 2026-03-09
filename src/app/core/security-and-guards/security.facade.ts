@@ -12,6 +12,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class SecurityFacade {
 
   loading$ = new BehaviorSubject<boolean>(false);
+  photoUrl$ = new BehaviorSubject<string | null>(null);
   private TOKEN_KEY = 'token';
 
   get token(): string | null { return localStorage.getItem(this.TOKEN_KEY); }
@@ -21,6 +22,12 @@ export class SecurityFacade {
     const token = this.token;
     if (!token) return null;
     return JSON.parse(atob(token.split('.')[1]));
+  }
+
+  get userId() {
+    const tokenPayload = this.tokenPayload;
+    if (!tokenPayload) return null;
+    return Number(tokenPayload.sub);
   }
 
   constructor(
@@ -45,9 +52,9 @@ export class SecurityFacade {
       });
   }
 
-  fazerLogin(formValue: Usuario) {
+  login(formValue: Partial<Usuario>) {
     this.loading$.next(true);
-    this.service.fazerLogin(formValue)
+    this.service.login(formValue)
       .subscribe({
         next: res => {
           localStorage.setItem(this.TOKEN_KEY, res.accessToken);

@@ -11,15 +11,15 @@ export class LoginComponent {
 
   loading$ = this.facade.loading$;
 
-  protected usuario: Usuario = {
+  protected usuario: Partial<Usuario> = {
     email: '',
     password: ''
   };
 
   constructor(private facade: SecurityFacade) { }
 
-  protected fazerLogin(): void {
-    this.facade.fazerLogin(this.usuario);
+  protected login(): void {
+    this.facade.login(this.usuario);
   }
 
 }

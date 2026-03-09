@@ -2,11 +2,10 @@
 
   <!-- dropdown-toggle pega a setinha padrão do Bootstrap -->
 	<div class="dropdown-toggle d-flex align-items-center gap-1" ngbDropdownToggle style="cursor: pointer;" tabindex="0">
-		<img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+		<img [src]="(photoUrl$ | async) ?? 'https://github.com/mdo.png'" alt="foto de perfil" width="32" height="32" class="rounded-circle object-fit-cover">
 	</div>
 
 	<div ngbDropdownMenu class="dropdown-menu">
-		<button ngbDropdownItem routerLink="/usuario/preferencias">Preferências</button>
 		<button ngbDropdownItem routerLink="/usuario">Perfil</button>
     <hr class="dropdown-divider">
 		<button ngbDropdownItem (click)="logout()">Logout</button>
