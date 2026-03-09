@@ -15,6 +15,10 @@ export class TarefaDetailsStore {
     return this._state$.value!.id as number;
   }
 
+  getDto(): Tarefa {
+    return this._state$.value!.dto;
+  }
+
   // SETTERS
 
   inicializarDados(dto: Tarefa, id: number) {

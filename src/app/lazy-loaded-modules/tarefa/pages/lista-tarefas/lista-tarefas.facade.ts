@@ -85,9 +85,9 @@ export class ListaTarefasFacade implements OnDestroy {
     }
   }
 
-  toggleConclusao(id: number) {
+  toggleConclusao(tarefa: Tarefa) {
     this.store.setSalvandoConclusao();
-    this.service.toggleConclusaoById(id)
+    this.service.patch({ concluida: !tarefa.concluida }, tarefa.id!)
       .pipe(
         takeUntil(this.destroy$),
         switchMap(() => this.findDadosServidor())

@@ -1,6 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { Tarefa } from '../../tarefa.types';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ListaTarefasFacade } from './lista-tarefas.facade';
 import { ListaTarefasStore } from './lista-tarefas.store';
@@ -118,8 +119,8 @@ export class ListaTarefasComponent implements OnInit, OnDestroy {
     this.facade.excluirConcluidas();
   }
 
-  toggleConclusao(id: number) {
-    this.facade.toggleConclusao(id);
+  toggleConclusao(tarefa: Tarefa) {
+    this.facade.toggleConclusao(tarefa);
   }
 
   deleteById(id: number) {

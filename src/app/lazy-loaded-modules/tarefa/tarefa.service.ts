@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tarefa } from './tarefa.types';
-import { filter, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 import { BaseService } from 'src/app/shared/base-service/base.service';
 import { environment } from 'src/environments/environment';
@@ -77,15 +77,6 @@ export class TarefaService extends BaseService<Tarefa> {
 
   findByIdWithEmbed(id: number): Observable<Tarefa> {
     return this.http.get<Tarefa>(`${this.baseUrl}/${id}?_embed=subtarefas&_embed=tags`);
-  }
-
-  // TODO: Alterar para PATCH, enviando somente o campo alterado
-  toggleConclusaoById(id: number): Observable<Tarefa> {
-    return this.findById(id).pipe(
-      filter(obj => this.isDto(obj)), // garante que não prossiga se for undefined
-      map((t: Tarefa) => { return { ...t, concluida: !t.concluida } }),
-      switchMap(t => this.update(t, id))
-    );
   }
 
   findConcluidas(): Observable<Tarefa[]> {

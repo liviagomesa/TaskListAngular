@@ -77,7 +77,7 @@
               *ngFor="let t of state.lista"
               [tarefa]="t"
               (excluida)="deleteById(t.id!)"
-              (concluida)="toggleConclusao(t.id!)">
+              (concluida)="toggleConclusao(t)">
             </app-tarefa-card>
           </ul>
 

@@ -59,6 +59,15 @@ export abstract class BaseService<D extends { id?: number | null }> {
   }
 
   /**
+   * Atualiza campos específicos de uma entidade via PATCH.
+   * Ao contrário de update(), este método não é sobrescrito por subclasses,
+   * por isso é seguro para atualizações parciais sem efeitos colaterais.
+   */
+  patch(fields: Partial<D>, id: number): Observable<D> {
+    return this.http.patch<D>(`${this.baseUrl}/${id}`, fields);
+  }
+
+  /**
    * Deleta uma entidade sem deletar suas entidades filhas.
    */
   deleteById(id: number): Observable<void> {

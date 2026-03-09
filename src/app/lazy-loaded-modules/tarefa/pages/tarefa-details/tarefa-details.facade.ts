@@ -26,7 +26,7 @@ export class TarefaDetailsFacade implements OnDestroy {
 
   toggleConclusao() {
     this.store.setSalvandoConclusao();
-    this.service.toggleConclusaoById(this.store.getId())
+    this.service.patch({ concluida: !this.store.getDto().concluida }, this.store.getId() )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: t => this.store.atualizarDto(t),
