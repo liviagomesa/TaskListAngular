@@ -1,30 +1,25 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SecurityService {
 
-  private usuarioAutenticado: boolean = false;
-  public logadoEmitter: Subject<boolean> = new Subject();
+  private loginUrl = `${environment.apiUrl}/login`;
+  private registerUrl = `${environment.apiUrl}/register`;
 
-  constructor(private router: Router) { }
+  constructor(private http: HttpClient) { }
 
-  public fazerLogin(usuario: Usuario): void {
-    if (usuario.email == 'usuario@email.com' && usuario.senha == '123456') {
-      this.usuarioAutenticado = true;
-      this.router.navigate(['/']);
-    } else {
-      this.usuarioAutenticado = false;
-      alert('Credenciais inválidas');
-    }
-    this.logadoEmitter.next(this.usuarioAutenticado);
+  public fazerLogin(formValue: Usuario): Observable<{ accessToken: string }> {
+    return this.http.post<{ accessToken: string }>(this.loginUrl, formValue);
   }
 
-  public isUsuarioAutenticado(): boolean {
-    return this.usuarioAutenticado;
+  public registrar(formValue: Usuario): Observable<{ accessToken: string }> {
+    return this.http.post<{ accessToken: string }>(this.registerUrl, formValue);
   }
+
 }

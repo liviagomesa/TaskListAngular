@@ -1,23 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
-import { SecurityService } from 'src/app/provided-in-root/security-and-guards/security.service';
+import { SecurityFacade } from 'src/app/provided-in-root/security-and-guards/security.facade';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
+
+  loading$ = this.facade.loading$;
 
   protected usuario: Usuario = new Usuario();
 
-  constructor(private securityService: SecurityService) { }
-
-  ngOnInit(): void {
-  }
+  constructor(private facade: SecurityFacade) { }
 
   protected fazerLogin(): void {
-    this.securityService.fazerLogin(this.usuario);
+    this.facade.fazerLogin(this.usuario);
   }
 
 }

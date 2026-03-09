@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { SecurityFacade } from 'src/app/provided-in-root/security-and-guards/security.facade';
 
 @Component({
   selector: 'app-user-dropdown',
   templateUrl: './user-dropdown.component.html',
   styleUrls: ['./user-dropdown.component.scss']
 })
-export class UserDropdownComponent implements OnInit {
+export class UserDropdownComponent {
 
-  constructor() { }
+  constructor(private facade: SecurityFacade) { }
 
-  ngOnInit(): void {
+  logout() {
+    this.facade.logout();
   }
 
 }

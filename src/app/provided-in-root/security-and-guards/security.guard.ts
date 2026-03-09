@@ -1,28 +1,26 @@
-import { SecurityService } from './security.service';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivate, CanLoad, Router } from '@angular/router';
+import { SecurityFacade } from './security.facade';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SecurityGuard implements CanActivate, CanLoad {
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.verificarPermissao();
-  }
-  canLoad(
-    route: Route,
-    segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.verificarPermissao();
+
+  canActivate(): boolean {
+    return this.isLoggedIn();
   }
 
-  constructor(private securityService: SecurityService, private router: Router) {}
+  canLoad(): boolean {
+    return this.isLoggedIn();
+  }
 
-  private verificarPermissao(): boolean {
-    if (this.securityService.isUsuarioAutenticado()) return true;
+  constructor(private facade: SecurityFacade, private router: Router) {}
+
+  private isLoggedIn(): boolean {
+    if (this.facade.isLoggedIn()) return true;
     this.router.navigate(['/login']);
     return false;
   }
+
 }

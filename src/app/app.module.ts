@@ -14,7 +14,8 @@ import { NotFoundComponent } from './standalone-pages/not-found/not-found.compon
 import { LoginComponent } from './standalone-pages/login/login.component';
 import { UserDropdownComponent } from './root-components/user-dropdown/user-dropdown.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AuthInterceptor } from './provided-in-root/security-and-guards/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,11 @@ import { HttpClientModule } from '@angular/common/http';
     {
       provide: LOCALE_ID,
       useValue: 'pt'
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
     }
   ],
   bootstrap: [AppComponent]

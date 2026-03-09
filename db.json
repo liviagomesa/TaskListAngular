@@ -2,6 +2,7 @@
   "tarefas": [
     {
       "id": 1,
+      "userId": 2,
       "titulo": "Limpar quintal",
       "anotacoes": "A limpeza será feita antes de qualquer coisa pra garantir que a sujeira não se espalhe pela casa.",
       "prazo": "2025-11-20",
@@ -29,6 +30,7 @@
     },
     {
       "id": 2,
+      "userId": 1,
       "titulo": "Ir ao médico",
       "anotacoes": "Endocrinologista ou clínico geral, o que conseguir horário primeiro.",
       "prazo": "2025-11-13",
@@ -62,6 +64,7 @@
     },
     {
       "titulo": "teste",
+      "userId": 1,
       "anotacoes": null,
       "prazo": "2026-03-08",
       "importancia": 2,
@@ -108,6 +111,18 @@
       "tarefaId": 2,
       "nome": "teste",
       "id": 19
+    }
+  ],
+  "users": [
+    {
+      "email": "usuario@email.com",
+      "password": "$2a$10$k/xfGe2jN0NSXcslRViapORp2sSeshOFrcYmdIRW3ru.MINpwvxxG",
+      "id": 1
+    },
+    {
+      "email": "usuario2@email.com",
+      "password": "$2a$10$lAfQepydGaPp1QCX6Faai.aRSFfv1iEJMCa849duGQdUG.WLXcZH.",
+      "id": 2
     }
   ]
 }
