@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
+import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.types';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

@@ -15,7 +15,7 @@ export abstract class BaseService<D extends { id?: number | null }> {
     return `${environment.apiUrl}/${this.endpoint}`;
   }
 
-  constructor(protected httpClient: HttpClient) { }
+  constructor(protected http: HttpClient) { }
 
   findAll(options?: ParamsBusca): Observable<D[]> {
     let params = new HttpParams();
@@ -41,35 +41,35 @@ export abstract class BaseService<D extends { id?: number | null }> {
       }
     }
 
-    return this.httpClient.get<D[]>(this.baseUrl, { params }).pipe(delay(2000));
+    return this.http.get<D[]>(this.baseUrl, { params }).pipe(delay(2000));
   }
 
   /**
    * Cria uma entidade sem criar suas entidades filhas.
    */
   create(formValue: D): Observable<D> {
-    return this.httpClient.post<D>(this.baseUrl, formValue);
+    return this.http.post<D>(this.baseUrl, formValue);
   }
 
   /**
    * Atualiza uma entidade sem atualizar suas entidades filhas.
    */
   update(formValue: D, id: number): Observable<D> {
-    return this.httpClient.put<D>(`${this.baseUrl}/${id}`, formValue);
+    return this.http.put<D>(`${this.baseUrl}/${id}`, formValue);
   }
 
   /**
    * Deleta uma entidade sem deletar suas entidades filhas.
    */
   deleteById(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Encontra uma entidade pelo id sem as entidades filhas.
    */
   findById(id: number): Observable<D> {
-    return this.httpClient.get<D>(`${this.baseUrl}/${id}`);
+    return this.http.get<D>(`${this.baseUrl}/${id}`);
   }
 
   /**
@@ -81,7 +81,7 @@ export abstract class BaseService<D extends { id?: number | null }> {
   }
 
   countAll(): Observable<number> {
-    return this.httpClient.get<D[]>(this.baseUrl, {
+    return this.http.get<D[]>(this.baseUrl, {
       params: new HttpParams().set('_per_page', '1').set('_page', 1),
       observe: 'response'
     }).pipe(

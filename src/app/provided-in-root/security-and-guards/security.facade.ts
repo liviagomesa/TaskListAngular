@@ -2,7 +2,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from "@angular/core";
 import { ToastrService } from 'ngx-toastr';
 import { SecurityService } from './security.service';
-import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
+import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.types';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -29,19 +29,9 @@ export class SecurityFacade {
     private router: Router
   ) { }
 
-  fazerLogin(formValue: Usuario) {
+  registrar(formValue: Usuario) {
     this.loading$.next(true);
-    let response$: Observable<{ accessToken: string }>;
-    const rotaAtual = this.router.url;
-    if (rotaAtual === '/login') response$ = this.service.fazerLogin(formValue);
-    else if (rotaAtual === '/register') response$ = this.service.registrar(formValue);
-    else {
-      this.toastr.error("Rota inválida");
-      this.loading$.next(false);
-      return;
-    }
-
-    response$
+    this.service.registrar(formValue)
       .subscribe({
         next: res => {
           localStorage.setItem(this.TOKEN_KEY, res.accessToken);
@@ -49,9 +39,23 @@ export class SecurityFacade {
           this.router.navigate(['/']);
         },
         error: (err: HttpErrorResponse) => {
-          // json-server-auth retorna 400 tanto para email duplicado no registro como para credenciais erradas no login
-          if (rotaAtual === '/register' && err.status === 400) this.toastr.error('E-mail já cadastrado ou senha muito curta');
-          else this.toastr.error('Credenciais inválidas');
+          this.toastr.error('Erro na solicitação de registro ao servidor: ' + err.message);
+          this.loading$.next(false);
+        }
+      });
+  }
+
+  fazerLogin(formValue: Usuario) {
+    this.loading$.next(true);
+    this.service.fazerLogin(formValue)
+      .subscribe({
+        next: res => {
+          localStorage.setItem(this.TOKEN_KEY, res.accessToken);
+          this.loading$.next(false);
+          this.router.navigate(['/']);
+        },
+        error: () => {
+          this.toastr.error('Credenciais inválidas');
           this.loading$.next(false);
         }
       });

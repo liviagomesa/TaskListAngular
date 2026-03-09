@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.model';
+import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.types';
 import { SecurityFacade } from 'src/app/provided-in-root/security-and-guards/security.facade';
 
 @Component({
@@ -11,7 +11,10 @@ export class LoginComponent {
 
   loading$ = this.facade.loading$;
 
-  protected usuario: Usuario = new Usuario();
+  protected usuario: Usuario = {
+    email: '',
+    password: ''
+  };
 
   constructor(private facade: SecurityFacade) { }
 

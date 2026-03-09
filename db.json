@@ -123,6 +123,31 @@
       "email": "usuario2@email.com",
       "password": "$2a$10$lAfQepydGaPp1QCX6Faai.aRSFfv1iEJMCa849duGQdUG.WLXcZH.",
       "id": 2
+    },
+    {
+      "email": "marina.duarte@example.com",
+      "password": "$2a$10$Oc.5tpIOcp2DtbOG0YQzdOVTqlGlI0mhbrN/6nURHm4AP5kU5Dds6",
+      "nome": "Marina Duarte",
+      "telefone": "27999999999",
+      "emailConfirm": "marina.duarte@example.com",
+      "endereco": {
+        "cep": "29040640",
+        "logradouro": "Rua Saint Hilaire",
+        "numero": "180",
+        "complemento": "",
+        "bairro": "Jucutuquara",
+        "estado": {
+          "id": "8",
+          "sigla": "ES",
+          "nome": "Espírito Santo"
+        },
+        "cidade": {
+          "ID": "78",
+          "Nome": "Vitória",
+          "Estado": "8"
+        }
+      },
+      "id": 3
     }
   ]
 }

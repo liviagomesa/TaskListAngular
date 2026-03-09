@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NotFoundComponent } from './standalone-pages/not-found/not-found.component';
 import { LoginComponent } from './standalone-pages/login/login.component';
+import { RegisterComponent } from './standalone-pages/register/register.component';
 import { SecurityGuard } from './provided-in-root/security-and-guards/security.guard';
 
 const routes: Routes = [
@@ -11,6 +12,7 @@ const routes: Routes = [
   },
   { path: '', redirectTo: '/tarefas', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'usuario',
     loadChildren: () => import('./lazy-loaded-modules/usuario/usuario.module').then(m => m.UsuarioModule),
     canActivate: [SecurityGuard], canLoad: [SecurityGuard]

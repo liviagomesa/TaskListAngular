@@ -14,7 +14,7 @@ export class TarefaService extends BaseService<Tarefa> {
 
   override create(formValue: Tarefa): Observable<Tarefa> {
     // Primeiro criamos a tarefa
-    return this.httpClient.post<Tarefa>(this.baseUrl, formValue).pipe(
+    return this.http.post<Tarefa>(this.baseUrl, formValue).pipe(
 
       // Depois criamos as subtarefas e tags
       switchMap((t: Tarefa) => {
@@ -25,14 +25,14 @@ export class TarefaService extends BaseService<Tarefa> {
         // Para cada tag do formulário, cria um POST novo
         (formValue.tags ?? []).forEach(tag => {
           ops.push(
-            this.httpClient.post(`${environment.apiUrl}/tags`, { ...tag, id: undefined, tarefaId: t.id })
+            this.http.post(`${environment.apiUrl}/tags`, { ...tag, id: undefined, tarefaId: t.id })
           );
         });
 
         // Para cada subtarefa do formulário, cria um POST novo
         (formValue.subtarefas ?? []).forEach(sub => {
           ops.push(
-            this.httpClient.post(`${environment.apiUrl}/subtarefas`, { ...sub, id: undefined, tarefaId: t.id })
+            this.http.post(`${environment.apiUrl}/subtarefas`, { ...sub, id: undefined, tarefaId: t.id })
           );
         });
 
@@ -58,7 +58,7 @@ export class TarefaService extends BaseService<Tarefa> {
   }
 
   override deleteById(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.baseUrl}/${id}?_dependent=subtarefas,tags`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}?_dependent=subtarefas,tags`);
   }
 
   excluirConcluidas(): Observable<void[] | null> {
@@ -76,7 +76,7 @@ export class TarefaService extends BaseService<Tarefa> {
   }
 
   findByIdWithEmbed(id: number): Observable<Tarefa> {
-    return this.httpClient.get<Tarefa>(`${this.baseUrl}/${id}?_embed=subtarefas&_embed=tags`);
+    return this.http.get<Tarefa>(`${this.baseUrl}/${id}?_embed=subtarefas&_embed=tags`);
   }
 
   toggleConclusaoById(id: number): Observable<Tarefa> {
@@ -88,7 +88,7 @@ export class TarefaService extends BaseService<Tarefa> {
   }
 
   findConcluidas(): Observable<Tarefa[]> {
-    return this.httpClient.get<Tarefa[]>(`${this.baseUrl}?concluida=true`);
+    return this.http.get<Tarefa[]>(`${this.baseUrl}?concluida=true`);
   }
 
   countConcluidas(): Observable<number> {
@@ -96,7 +96,7 @@ export class TarefaService extends BaseService<Tarefa> {
     .set('concluida', true)
     .set('_per_page', '1').set('_page', 1);      // O header X-Total-Count só é enviado pelo json-server quando você usa os parâmetros de paginação
 
-    return this.httpClient.get<Tarefa[]>(this.baseUrl, {
+    return this.http.get<Tarefa[]>(this.baseUrl, {
         params,
         observe: 'response'
       }

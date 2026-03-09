@@ -1,7 +1,7 @@
 <div class="modal modal-sheet bg-body-secondary min-vh-100 d-flex align-items-center justify-content-center">
   <div class="modal-dialog">
     <div class="modal-content rounded-4 shadow">
-      <div class="modal-header p-5 pb-4 border-bottom-0">
+      <div class="modal-header p-5 pb-4 border-bottom-0 d-flex justify-content-between align-items-center">
         <h1 class="fw-bold mb-0 fs-2">Entre na sua conta</h1>
       </div>
       <div class="modal-body p-5 pt-0">
@@ -17,6 +17,7 @@
           <span *ngIf="loading$ | async" class="spinner-border spinner-border-sm me-1"></span>
           {{ (loading$ | async) ? 'Entrando...' : 'Entrar' }}
         </button>
+        <button routerLink="/register" class="w-100 mb-2 btn btn-lg rounded-3 btn-secondary">Criar conta</button>
       </div>
     </div>
   </div>

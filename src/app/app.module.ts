@@ -16,6 +16,9 @@ import { UserDropdownComponent } from './root-components/user-dropdown/user-drop
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './provided-in-root/security-and-guards/auth.interceptor';
+import { RegisterComponent } from './standalone-pages/register/register.component';
+import { CommonModule } from '@angular/common';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -23,9 +26,11 @@ import { AuthInterceptor } from './provided-in-root/security-and-guards/auth.int
     HeaderComponent,
     NotFoundComponent,
     LoginComponent,
+    RegisterComponent,
     UserDropdownComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,
@@ -34,6 +39,7 @@ import { AuthInterceptor } from './provided-in-root/security-and-guards/auth.int
     ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    SharedModule,
     ToastrModule.forRoot({
       timeOut: 5000,
       extendedTimeOut: 2000,   // tempo extra se o usuário passar o mouse em cima

@@ -21,7 +21,7 @@ export class Utils {
       opcaoInvalida: (l, errValue) => `O valor selecionado em ${l} não é permitido. Permitidos: ${errValue.expected.join(', ')}.`,
       opcoesInvalidas: (l, errValue) => `Alguns valores informados em ${l} não são permitidos. Permitidos: ${errValue.expected.join(', ')}.`,
       estruturaInvalida: (l, errValue) => `A estrutura do valor informado em ${l} é inválida. Propriedades necessárias: ${errValue.chavesEsperadas.join(', ')}.`,
-      emailNaoCadastrado: () => `O e-mail precisa estar cadastrado.`,
+      emailEmUso: () => `O e-mail já está cadastrado.`,
       notEqual: (l, errValue) => `O valor do campo ${l} não confere com o campo ${this.camelToText(errValue.otherField)}.`,
       mask: (_, errValue) => `Formato inválido. Formato esperado: ${errValue.requiredMask}`
     };

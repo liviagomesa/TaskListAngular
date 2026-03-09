@@ -1,0 +1,92 @@
+<div class="bg-body-secondary min-vh-100 py-5 d-flex align-items-start justify-content-center">
+  <div class="modal-dialog w-100" style="max-width: 560px">
+    <div class="modal-content rounded-4 shadow">
+
+      <div class="modal-header p-5 pb-4 border-bottom-0 d-flex justify-content-between align-items-center">
+        <h1 class="fw-bold mb-0 fs-2">Criar conta</h1>
+        <a routerLink="/login" class="btn btn-outline-secondary btn-sm">Já tenho conta</a>
+      </div>
+
+      <div class="modal-body p-5 pt-0">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+          <div class="mb-3">
+            <app-input-field formControlName="nome" label="Nome completo"></app-input-field>
+          </div>
+
+          <div class="mb-3">
+            <app-input-field formControlName="telefone" label="Telefone" mask="(00) 00000-0000" inputmode="tel"></app-input-field>
+          </div>
+
+          <div class="mb-3">
+            <app-input-field formControlName="email" label="E-mail" type="email" inputmode="email"></app-input-field>
+          </div>
+
+          <div class="mb-3">
+            <app-input-field formControlName="emailConfirm" label="Confirmação de e-mail" type="email" inputmode="email"></app-input-field>
+          </div>
+
+          <div class="mb-3">
+            <app-input-field formControlName="password" label="Senha" type="password"></app-input-field>
+          </div>
+
+          <h6 class="text-muted mb-3">Endereço</h6>
+
+          <div formGroupName="endereco">
+
+            <div class="mb-3">
+              <app-input-field formControlName="cep" label="CEP" mask="00000-000" inputmode="numeric"></app-input-field>
+              <span *ngIf="buscandoCep" class="spinner-border spinner-border-sm ms-1"></span>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-8">
+                <app-input-field formControlName="logradouro" label="Logradouro"></app-input-field>
+              </div>
+              <div class="col-4">
+                <app-input-field formControlName="numero" label="Número"></app-input-field>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <app-input-field formControlName="complemento" label="Complemento"></app-input-field>
+            </div>
+
+            <div class="mb-3">
+              <app-input-field formControlName="bairro" label="Bairro"></app-input-field>
+            </div>
+
+            <div class="mb-3">
+              <label for="estado">Estado</label>
+              <select class="form-select rounded-3" id="estado" formControlName="estado"
+                [ngClass]="getValidationClass('endereco.estado')" [compareWith]="compareEstado">
+                <option [ngValue]="null" disabled>Selecione o estado</option>
+                <option *ngFor="let e of estados" [ngValue]="e">{{ e.sigla }} – {{ e.nome }}</option>
+              </select>
+              <app-error-msg [control]="$any(form.get('endereco.estado'))" label="Estado"></app-error-msg>
+            </div>
+
+            <div class="mb-4">
+              <label for="cidade">Cidade</label>
+              <select class="form-select rounded-3" id="cidade" formControlName="cidade"
+                [ngClass]="getValidationClass('endereco.cidade')" [compareWith]="compareCidade">
+                <option [ngValue]="null" disabled>
+                  {{ form.get('endereco.estado')?.value ? 'Selecione a cidade' : 'Selecione o estado primeiro' }}
+                </option>
+                <option *ngFor="let c of cidades" [ngValue]="c">{{ c.Nome }}</option>
+              </select>
+               <app-error-msg [control]="$any(form.get('endereco.cidade'))" label="Cidade"></app-error-msg>
+            </div>
+          </div>
+
+          <button type="submit" class="w-100 btn btn-lg rounded-3 btn-primary" [disabled]="loading$ | async">
+            <span *ngIf="loading$ | async" class="spinner-border spinner-border-sm me-1"></span>
+            {{ (loading$ | async) ? 'Cadastrando...' : 'Criar conta' }}
+          </button>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
