@@ -1,5 +1,5 @@
 import { forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
-import { ParamsBusca } from 'src/app/provided-in-root/params-busca.model';
+import { ParamsBusca } from 'src/app/shared/base-service/params-busca.model';
 import { ListaTarefasStore } from './lista-tarefas.store';
 import { Injectable, OnDestroy } from "@angular/core";
 import { TarefaService } from '../../tarefa.service';

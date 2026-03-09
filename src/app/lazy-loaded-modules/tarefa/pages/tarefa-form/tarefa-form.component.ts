@@ -1,4 +1,4 @@
-import { CustomSyncValidators } from './../../../../provided-in-root/custom-sync-validators';
+import { CustomSyncValidators } from 'src/app/shared/custom-sync-validators';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ImportanciaTarefa } from '../../enums/importancia-tarefa.enum';
 import { Subtarefa, Tag, Tarefa } from '../../tarefa.types';

@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { NotFoundComponent } from './standalone-pages/not-found/not-found.component';
-import { LoginComponent } from './standalone-pages/login/login.component';
-import { RegisterComponent } from './standalone-pages/register/register.component';
-import { SecurityGuard } from './provided-in-root/security-and-guards/security.guard';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './pages/register/register.component';
+import { SecurityGuard } from './core/security-and-guards/security.guard';
 
 const routes: Routes = [
   { path: 'tarefas',

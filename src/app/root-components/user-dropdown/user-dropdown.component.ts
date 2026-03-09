@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SecurityFacade } from 'src/app/provided-in-root/security-and-guards/security.facade';
+import { SecurityFacade } from 'src/app/core/security-and-guards/security.facade';
 
 @Component({
   selector: 'app-user-dropdown',

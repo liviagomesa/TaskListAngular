@@ -1,17 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { delay, map, Observable, shareReplay } from 'rxjs';
-import { Cidade, Estado } from 'src/app/lazy-loaded-modules/usuario/usuario.types';
+import { Cidade, Estado, ViaCepResponse } from './address.types';
 
-export interface ViaCepResponse {
-  cep: string;
-  logradouro: string;
-  complemento: string;
-  bairro: string;
-  localidade: string;
-  uf: string;
-  erro?: boolean;
-}
+export { ViaCepResponse } from './address.types';
 
 @Injectable({
   providedIn: 'root'

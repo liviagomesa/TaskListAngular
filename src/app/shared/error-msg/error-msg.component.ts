@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
-import { Utils } from 'src/app/provided-in-root/utils';
+import { Utils } from 'src/app/shared/utils';
 
 @Component({
   selector: 'app-error-msg',

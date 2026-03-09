@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { distinctUntilChanged, EMPTY, Subject, switchMap, takeUntil } from 'rxjs';
-import { AddressService, ViaCepResponse } from 'src/app/provided-in-root/address/address.service';
-import { SecurityFacade } from 'src/app/provided-in-root/security-and-guards/security.facade';
+import { AddressService, ViaCepResponse } from 'src/app/core/address/address.service';
+import { SecurityFacade } from 'src/app/core/security-and-guards/security.facade';
 import { Cidade, Estado, Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.types';
 import { ToastrService } from 'ngx-toastr';
-import { CustomSyncValidators } from 'src/app/provided-in-root/custom-sync-validators';
-import { AsyncValidators } from 'src/app/provided-in-root/async-validators';
+import { CustomSyncValidators } from 'src/app/shared/custom-sync-validators';
+import { AsyncValidators } from 'src/app/shared/async-validators';
 
 @Component({
   selector: 'app-register',

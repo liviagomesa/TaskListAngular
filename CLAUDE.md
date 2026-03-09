@@ -30,10 +30,10 @@ This is an **Angular 14** task manager app backed by **json-server** (`db.json` 
 - `src/app/app.module.ts` — root module; configures ToastrModule, locale `pt`
 - `src/app/lazy-loaded-modules/tarefa/` — lazy-loaded feature module for tasks
 - `src/app/lazy-loaded-modules/usuario/` — lazy-loaded feature module for users
-- `src/app/shared/` — `SharedModule` with reusable pipes, components (`InputFieldComponent`, `ErrorMsgComponent`, `AlertComponent`), exported for use in feature modules
-- `src/app/provided-in-root/` — singleton services, guards, validators (`SecurityService`, `FormGuard`, custom validators, `AddressService`)
+- `src/app/shared/` — `SharedModule` with reusable pipes, components (`InputFieldComponent`, `ErrorMsgComponent`, `AlertComponent`), validators (`CustomSyncValidators`, `AsyncValidators`), utilities (`Utils`), and `params-busca.model.ts`; exported for use in feature modules
+- `src/app/core/` — singleton infrastructure: `security-and-guards/` (`SecurityService`, `SecurityGuard`, `FormGuard`, `AuthInterceptor`, `SecurityFacade`) and `address/` (`AddressService`)
 - `src/app/root-components/` — `HeaderComponent`, `UserDropdownComponent` (declared in `AppModule`)
-- `src/app/standalone-pages/` — `LoginComponent`, `NotFoundComponent`
+- `src/app/pages/` — `LoginComponent`, `RegisterComponent`, `NotFoundComponent` (declared in `AppModule`)
 
 ### Routes
 

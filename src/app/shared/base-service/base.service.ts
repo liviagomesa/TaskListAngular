@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { delay, map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ParamsBusca } from 'src/app/provided-in-root/params-busca.model';
+import { ParamsBusca } from './params-busca.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

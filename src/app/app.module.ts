@@ -10,13 +10,13 @@ import '@angular/common/locales/global/pt';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TarefaModule } from './lazy-loaded-modules/tarefa/tarefa.module';
 import { HeaderComponent } from './root-components/header/header.component';
-import { NotFoundComponent } from './standalone-pages/not-found/not-found.component';
-import { LoginComponent } from './standalone-pages/login/login.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { LoginComponent } from './pages/login/login.component';
 import { UserDropdownComponent } from './root-components/user-dropdown/user-dropdown.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AuthInterceptor } from './provided-in-root/security-and-guards/auth.interceptor';
-import { RegisterComponent } from './standalone-pages/register/register.component';
+import { AuthInterceptor } from './core/security-and-guards/auth.interceptor';
+import { RegisterComponent } from './pages/register/register.component';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from './shared/shared.module';
 

@@ -1,3 +1,7 @@
+import { Cidade, Estado } from 'src/app/core/address/address.types';
+
+export { Cidade, Estado };
+
 export interface Usuario {
   id?: number;
   email: string;
@@ -13,16 +17,4 @@ export interface Endereco {
   bairro: string;
   cidade: Cidade;
   estado: Estado;
-}
-
-export interface Estado {
-  id:    number;
-  sigla: string;
-  nome:  string;
-}
-
-export interface Cidade {
-  ID:     number;
-  Nome:   string;
-  Estado: number;
 }

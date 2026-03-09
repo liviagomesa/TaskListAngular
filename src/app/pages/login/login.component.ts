@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Usuario } from 'src/app/lazy-loaded-modules/usuario/usuario.types';
-import { SecurityFacade } from 'src/app/provided-in-root/security-and-guards/security.facade';
+import { SecurityFacade } from 'src/app/core/security-and-guards/security.facade';
 
 @Component({
   selector: 'app-login',
