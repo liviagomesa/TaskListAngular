@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Injectable } from "@angular/core";
 import { ToastrService } from 'ngx-toastr';
 import { SecurityService } from './security.service';

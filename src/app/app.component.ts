@@ -1,6 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subject, Subscription, takeUntil } from 'rxjs';
-import { SecurityService } from './core/security-and-guards/security.service';
+import { Component } from '@angular/core';
 import { SecurityFacade } from './core/security-and-guards/security.facade';
 
 @Component({
